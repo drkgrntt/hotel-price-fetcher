@@ -1,0 +1,18 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Hotel Prices Search API",
+    "description": "Connectes to the Hotel Prices search library."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7777/api/v1/",
+      "description": "Local server"
+    }
+  ],
+  "paths": {},
+  "components": {
+    "schemas": {}
+  }
+}
