@@ -1,24 +1,38 @@
 interface Price {
   price: number
   date: string
+  updated: string
 }
 const BASE_API_URL = 'http://localhost:7777/api/v1'
 
-const getTodaysAverageHotelPrice = async (elementId: string) => {
+const buildTimestamp = (date: Date) => {
+  const timestamp = `${
+    date.getMonth() + 1
+  }/${date.getDate()}/${date.getFullYear()}`
+
+  return timestamp
+}
+
+// @ts-ignore
+window.getTodaysAverageHotelPrice = async (elementId: string) => {
   fetch(`${BASE_API_URL}/day`)
     .then((res) => res.json())
     .then((res) => {
-      const price = `$${(res.price.price as number).toFixed(2)}`
+      const price: Price = res.price
+
+      const timestamp = buildTimestamp(new Date(price.updated))
+      const priceText = `$${(price.price as number).toFixed(
+        2
+      )} as of ${timestamp}`
       const element = document.getElementById(elementId)
       if (element) {
-        element.innerText = price
+        element.innerText = priceText
       }
     })
 }
 
-getTodaysAverageHotelPrice('average-hotel-prices')
-
-const getWeeklyAverageHotelPrices = async (elementId: string) => {
+// @ts-ignore
+window.getWeeklyAverageHotelPrices = async (elementId: string) => {
   // Load Chart.js
   const script = document.createElement('script')
   script.src =
@@ -40,18 +54,20 @@ const getWeeklyAverageHotelPrices = async (elementId: string) => {
         const prices: Price[] = res.prices
 
         const canvas = document.createElement('canvas')
-        canvas.height = 400
-        canvas.width = 400
         const ctx = canvas.getContext('2d')
 
-        // @ts-ignore
+        const timestamp = buildTimestamp(
+          new Date(prices[prices.length - 1].updated)
+        )
+
+        // @ts-ignore - Chart is defined via chart.js
         const myChart = new window.Chart(ctx, {
           type: 'bar',
           data: {
             labels: prices.map((price) => price.date),
             datasets: [
               {
-                label: 'Average hotel prices near Times Square',
+                label: `Average hotel prices near Times Square as of ${timestamp}`,
                 data: prices.map((price) => price.price.toFixed(2)),
                 backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
@@ -89,5 +105,3 @@ const getWeeklyAverageHotelPrices = async (elementId: string) => {
 
   document.body.appendChild(script)
 }
-
-getWeeklyAverageHotelPrices('average-hotel-prices')
