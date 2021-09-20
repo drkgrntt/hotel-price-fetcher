@@ -4,8 +4,9 @@ import { read, write } from './database'
 import { Price } from './types'
 
 let timestamp: number
-const maybeScrapeAveragePrices = async (numberOfDays: number = 1) => {
+const maybeScrapeAveragePrices = async (numberOfDays: number = 7) => {
   const now = new Date().getTime()
+  // one scrape per hour
   if (!timestamp || now - timestamp > 1000 * 60 * 60) {
     timestamp = now
     await scrapeAveragePrices(numberOfDays)
@@ -13,7 +14,7 @@ const maybeScrapeAveragePrices = async (numberOfDays: number = 1) => {
 }
 
 const scrapeAveragePrices = async (
-  numberOfDays: number = 1
+  numberOfDays: number = 7
 ): Promise<number[]> => {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -77,7 +78,11 @@ const scrapeAveragePrices = async (
   const date = new Date()
   const prices: Price[] = []
   for (const price of averagePrices) {
-    prices.push({ price, date: date.toDateString() })
+    prices.push({
+      price,
+      date: date.toDateString(),
+      updated: new Date().toISOString(),
+    })
     date.setDate(date.getDate() + 1)
   }
   await write(...prices)
@@ -111,6 +116,6 @@ export const getThisWeeksAverage = async (
 
   await read(dates, (prices: Price[]) => {
     res.send({ prices })
-    maybeScrapeAveragePrices(numberOfDays)
+    maybeScrapeAveragePrices()
   })
 }

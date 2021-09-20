@@ -62,6 +62,9 @@
           },
           "date": {
             "type": "string"
+          },
+          "updated": {
+            "type": "string"
           }
         }
       }
