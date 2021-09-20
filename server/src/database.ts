@@ -2,15 +2,23 @@ import { MongoClient, MongoClientOptions } from 'mongodb'
 import { Price } from './types'
 
 const uri = process.env.MONGO_URI
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-} as MongoClientOptions)
+let client: MongoClient
+
+const getClient = () => {
+  if (client) return client
+
+  return new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 3,
+  } as MongoClientOptions)
+}
 
 export const read = async (
   date: string | string[],
   callback: Function
 ) => {
+  const client = getClient()
   client.connect(async (err) => {
     if (err) {
       throw err
@@ -38,6 +46,7 @@ export const read = async (
 }
 
 export const write = async (...prices: Price[]) => {
+  const client = getClient()
   client.connect(async (err) => {
     if (err) {
       throw err
