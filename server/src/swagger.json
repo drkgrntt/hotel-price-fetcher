@@ -11,8 +11,60 @@
       "description": "Local server"
     }
   ],
-  "paths": {},
+  "paths": {
+    "/day": {
+      "get": {
+        "summary": "Gets today's average hotel price.",
+        "responses": {
+          "200": {
+            "description": "A price",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Price"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/week": {
+      "get": {
+        "summary": "Gets the next week of average hotel prices.",
+        "responses": {
+          "200": {
+            "description": "A JSON array of prices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Price"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
-    "schemas": {}
+    "schemas": {
+      "Price": {
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "price": {
+            "type": "float"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      }
+    }
   }
 }
