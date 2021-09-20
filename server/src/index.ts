@@ -17,6 +17,8 @@ const main = async () => {
     swaggerUi.setup(swaggerDoc)
   )
 
+  app.use(express.static('public'))
+
   app.get('/api/v1/day', getTodaysAverage)
   app.get('/api/v1/week', getThisWeeksAverage)
 

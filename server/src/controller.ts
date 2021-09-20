@@ -16,7 +16,9 @@ const maybeScrapeAveragePrices = async (numberOfDays: number = 7) => {
 const scrapeAveragePrices = async (
   numberOfDays: number = 7
 ): Promise<number[]> => {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
   const page = await browser.newPage()
   await page.goto(
     'https://www.google.com/travel/hotels/Times Square',
