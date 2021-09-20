@@ -1,5 +1,16 @@
 import { Request, Response } from 'express'
 import puppeteer from 'puppeteer'
+import { read, write } from './database'
+import { Price } from './types'
+
+let timestamp: number
+const maybeScrapeAveragePrices = async (numberOfDays: number = 1) => {
+  const now = new Date().getTime()
+  if (!timestamp || now - timestamp > 1000 * 60 * 60) {
+    timestamp = now
+    await scrapeAveragePrices(numberOfDays)
+  }
+}
 
 const scrapeAveragePrices = async (
   numberOfDays: number = 1
@@ -15,7 +26,9 @@ const scrapeAveragePrices = async (
 
   // The default page is not necessarily today,
   // so click back until it is today
-  while (true) {
+  // We don't expect to ever get to 20, we're just setting an arbitrary number
+  // to prevent an infinite loop that "while (true) {" would provide
+  for (let i = 0; i < 20; i++) {
     const prevDayButton = await page.$$(
       'button[aria-label="Set Check out one day earlier."]'
     )
@@ -61,13 +74,43 @@ const scrapeAveragePrices = async (
     }
   }
 
+  const date = new Date()
+  const prices: Price[] = []
+  for (const price of averagePrices) {
+    prices.push({ price, date: date.toDateString() })
+    date.setDate(date.getDate() + 1)
+  }
+  await write(...prices)
+
   return averagePrices
 }
 
-export const getAverageHotelPrice = async (
-  req: Request,
+export const getTodaysAverage = async (
+  _: Request,
   res: Response
 ): Promise<void> => {
-  const prices = await scrapeAveragePrices(7)
-  res.send({ prices })
+  await read(new Date().toDateString(), (price: Price) => {
+    res.send({ price })
+    maybeScrapeAveragePrices()
+  })
+}
+
+export const getThisWeeksAverage = async (
+  _: Request,
+  res: Response
+): Promise<void> => {
+  const numberOfDays = 7
+
+  const date = new Date()
+  const dates: string[] = []
+
+  for (let i = 0; i < numberOfDays; i++) {
+    dates.push(date.toDateString())
+    date.setDate(date.getDate() + 1)
+  }
+
+  await read(dates, (prices: Price[]) => {
+    res.send({ prices })
+    maybeScrapeAveragePrices(numberOfDays)
+  })
 }
