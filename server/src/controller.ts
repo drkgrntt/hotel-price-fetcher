@@ -4,7 +4,9 @@ import { read, write } from './database'
 import { Price } from './types'
 
 let timestamp: number
-const maybeScrapeAveragePrices = async (numberOfDays: number = 7) => {
+const maybeScrapeAveragePrices = async (
+  numberOfDays: number = 10
+) => {
   const now = new Date().getTime()
   // one scrape per hour
   if (!timestamp || now - timestamp > 1000 * 60 * 60) {
@@ -14,10 +16,19 @@ const maybeScrapeAveragePrices = async (numberOfDays: number = 7) => {
 }
 
 const scrapeAveragePrices = async (
-  numberOfDays: number = 7
+  numberOfDays: number = 10
 ): Promise<number[]> => {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process', // <- this one doesn't works in Windows
+      '--disable-gpu',
+    ],
   })
   const page = await browser.newPage()
   await page.goto(
