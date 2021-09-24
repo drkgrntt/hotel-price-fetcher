@@ -88,6 +88,16 @@ const scrapeAveragePrices = async (
     }
   }
 
+  await browser.close()
+
+  // If there are duplicates, set the timestamp to run in 5 minutes and do not save
+  if ([...new Set(averagePrices)].length < averagePrices.length) {
+    const now = new Date().getTime()
+    timestamp = now - 1000 * 60 * 55
+
+    return []
+  }
+
   const date = new Date()
   const prices: Price[] = []
   for (const price of averagePrices) {
