@@ -1,9 +1,12 @@
+declare var Chart: any
+declare var getTodaysAverageHotelPrice: Function
+declare var getWeeklyAverageHotelPrices: Function
 interface Price {
   price: number
   date: string
   updated: string
 }
-const BASE_API_URL = 'http://localhost:7777/api/v1'
+const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
 
 const buildTimestamp = (date: Date) => {
   const timestamp = `${
@@ -13,7 +16,6 @@ const buildTimestamp = (date: Date) => {
   return timestamp
 }
 
-// @ts-ignore
 window.getTodaysAverageHotelPrice = async (elementId: string) => {
   fetch(`${BASE_API_URL}/day`)
     .then((res) => res.json())
@@ -31,18 +33,8 @@ window.getTodaysAverageHotelPrice = async (elementId: string) => {
     })
 }
 
-// @ts-ignore
 window.getWeeklyAverageHotelPrices = async (elementId: string) => {
-  // Load Chart.js
-  const script = document.createElement('script')
-  script.src =
-    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js'
-  script.integrity =
-    'sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q=='
-  script.crossOrigin = 'anonymous'
-  script.referrerPolicy = 'no-referrer'
-
-  script.onload = () => {
+  const createChart = () => {
     fetch(`${BASE_API_URL}/week`)
       .then((res) => res.json())
       .then((res) => {
@@ -63,8 +55,7 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
           new Date(prices[prices.length - 1].updated)
         )
 
-        // @ts-ignore - Chart is defined via chart.js
-        const myChart = new window.Chart(ctx, {
+        const chart = new window.Chart(ctx, {
           type: 'bar',
           data: {
             labels: prices.map((price) => price.date),
@@ -92,45 +83,65 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
               },
             ],
           },
-          options: {
-            events: [],
-            animation: {
-              duration: 1,
-              onComplete: function () {
-                ctx.textAlign = 'center'
-                ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-                ctx.textBaseline = 'bottom'
-                // @ts-ignore Loop through each data in the datasets
-                this.data.datasets.forEach(
-                  (dataset: any, i: number) => {
-                    // @ts-ignore
-                    var meta = this.getDatasetMeta(i)
-                    meta.data.forEach(function (
-                      bar: any,
-                      index: number
-                    ) {
-                      var data = dataset.data[index]
-                      ctx.fillText(data, bar.x.toFixed(2), bar.y - 5)
-                    })
-                  }
-                )
-              },
-            },
-            plugins: {
-              legend: false,
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          },
         })
 
+        chart.options = {
+          events: [],
+          animation: {
+            duration: 1,
+            onComplete: () => {
+              ctx.textAlign = 'center'
+              ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+              ctx.textBaseline = 'bottom'
+
+              // Loop through each data in the datasets
+              chart.data.datasets.forEach(
+                (dataset: any, i: number) => {
+                  // @ts-ignore
+                  var meta = chart.getDatasetMeta(i)
+                  meta.data.forEach(function (
+                    bar: any,
+                    index: number
+                  ) {
+                    var data = `$${dataset.data[index]}`
+                    ctx.fillText(data, bar.x, bar.y)
+                  })
+                }
+              )
+            },
+          },
+          plugins: {
+            legend: false,
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        }
+
         // Show the chart
+        element.innerHTML = ''
         element.appendChild(canvas)
       })
   }
 
-  document.body.appendChild(script)
+  if (window.Chart) {
+    createChart()
+  } else {
+    // Load Chart.js
+    const script = document.createElement('script')
+    script.src =
+      'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js'
+    script.integrity =
+      'sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q=='
+    script.crossOrigin = 'anonymous'
+    script.referrerPolicy = 'no-referrer'
+
+    script.onload = () => {
+      createChart()
+    }
+
+    document.body.appendChild(script)
+  }
 }
