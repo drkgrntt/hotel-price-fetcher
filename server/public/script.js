@@ -36,7 +36,7 @@ var __awaiter =
       )
     })
   }
-const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
+const BASE_API_URL = 'https://hpf.dragonflyer.com/api/v1'
 const buildTimestamp = (date) => {
   const timestamp = `${
     date.getMonth() + 1
@@ -114,12 +114,7 @@ window.getWeeklyAverageHotelPrices = (elementId) =>
               ],
             },
             options: {
-              tooltips: {
-                enabled: true,
-              },
-              hover: {
-                animationDuration: 1,
-              },
+              events: [],
               animation: {
                 duration: 1,
                 onComplete: function () {

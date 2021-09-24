@@ -93,12 +93,7 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
             ],
           },
           options: {
-            tooltips: {
-              enabled: true,
-            },
-            hover: {
-              animationDuration: 1,
-            },
+            events: [],
             animation: {
               duration: 1,
               onComplete: function () {
