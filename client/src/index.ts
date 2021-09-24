@@ -55,6 +55,9 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
 
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          throw new Error('Canvas not supported')
+        }
 
         const timestamp = buildTimestamp(
           new Date(prices[prices.length - 1].updated)
@@ -90,6 +93,37 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
             ],
           },
           options: {
+            tooltips: {
+              enabled: true,
+            },
+            hover: {
+              animationDuration: 1,
+            },
+            animation: {
+              duration: 1,
+              onComplete: function () {
+                ctx.textAlign = 'center'
+                ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+                ctx.textBaseline = 'bottom'
+                // @ts-ignore Loop through each data in the datasets
+                this.data.datasets.forEach(
+                  (dataset: any, i: number) => {
+                    // @ts-ignore
+                    var meta = this.getDatasetMeta(i)
+                    meta.data.forEach(function (
+                      bar: any,
+                      index: number
+                    ) {
+                      var data = dataset.data[index]
+                      ctx.fillText(data, bar.x.toFixed(2), bar.y - 5)
+                    })
+                  }
+                )
+              },
+            },
+            plugins: {
+              legend: false,
+            },
             scales: {
               y: {
                 beginAtZero: true,
