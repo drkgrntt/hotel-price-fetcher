@@ -36,7 +36,7 @@ var __awaiter =
       )
     })
   }
-const BASE_API_URL = 'https://hpf.dragonflyer.com/api/v1'
+const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
 const buildTimestamp = (date) => {
   const timestamp = `${
     date.getMonth() + 1
