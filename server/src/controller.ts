@@ -18,6 +18,8 @@ const maybeScrapeAveragePrices = async (
 const scrapeAveragePrices = async (
   numberOfDays: number = 10
 ): Promise<number[]> => {
+  console.log('====== starting scrape ======')
+  const averagePrices: number[] = []
   const browser = await puppeteer.launch({
     args: [
       '--no-sandbox',
@@ -29,67 +31,72 @@ const scrapeAveragePrices = async (
       '--single-process', // <- this one doesn't works in Windows
       '--disable-gpu',
     ],
+    headless: true,
   })
-  const page = await browser.newPage()
-  await page.goto(
-    'https://www.google.com/travel/hotels/Times Square',
-    {
-      waitUntil: 'networkidle2',
-    }
-  )
 
-  // The default page is not necessarily today,
-  // so click back until it is today
-  // We don't expect to ever get to 20, we're just setting an arbitrary number
-  // to prevent an infinite loop that "while (true) {" would provide
-  for (let i = 0; i < 20; i++) {
-    const prevDayButton = await page.$$(
-      'button[aria-label="Set Check out one day earlier."]'
+  try {
+    const page = await browser.newPage()
+    await page.goto(
+      'https://www.google.com/travel/hotels/Times Square',
+      {
+        waitUntil: 'networkidle2',
+      }
     )
 
-    const isDisabled = await page.evaluate(
-      (el) => el.disabled,
-      prevDayButton[1]
-    )
-    if (isDisabled) {
-      break
-    }
-
-    await prevDayButton[1].click()
-    await page.waitForTimeout(5000)
-  }
-
-  const averagePrices: number[] = []
-
-  for (let i = 0; i < numberOfDays; i++) {
-    const prices: number[] = []
-
-    const elements = await page.$$('.Aujq9d.sSHqwe')
-    for (const element of elements) {
-      const value = await page.evaluate(
-        (el) => el.textContent,
-        element
+    // The default page is not necessarily today,
+    // so click back until it is today
+    // We don't expect to ever get to 20, we're just setting an arbitrary number
+    // to prevent an infinite loop that "while (true) {" would provide
+    for (let i = 0; i < 20; i++) {
+      const prevDayButton = await page.$$(
+        'button[aria-label="Set Check out one day earlier."]'
       )
-      const price = parseInt(value.substring(1))
-      prices.push(price)
-    }
 
-    const averagePrice =
-      prices.reduce((a, b) => a + b) / prices.length
-    averagePrices.push(averagePrice)
-
-    // Click to the next day
-    if (i < numberOfDays - 1) {
-      const nextDayButton = await page.$$(
-        'button[aria-label="Set Check in one day later."]'
+      const isDisabled = await page.evaluate(
+        (el) => el.disabled,
+        prevDayButton[1]
       )
-      await nextDayButton[1].click()
+      if (isDisabled) {
+        break
+      }
+
+      await prevDayButton[1].click()
+      console.log('previous click')
       await page.waitForTimeout(5000)
     }
+
+    for (let i = 0; i < numberOfDays; i++) {
+      const prices: number[] = []
+
+      const elements = await page.$$('.Aujq9d.sSHqwe')
+      for (const element of elements) {
+        const value = await page.evaluate(
+          (el) => el.textContent,
+          element
+        )
+        const price = parseInt(value.substring(1))
+        prices.push(price)
+      }
+
+      const averagePrice =
+        prices.reduce((a, b) => a + b) / prices.length
+      averagePrices.push(averagePrice)
+      console.log('price: ', averagePrice)
+      // Click to the next day
+      if (i < numberOfDays - 1) {
+        const nextDayButton = await page.$$(
+          'button[aria-label="Set Check in one day later."]'
+        )
+        await nextDayButton[1].click()
+        console.log('next click')
+        await page.waitForTimeout(5000)
+      }
+    }
+  } finally {
+    await browser.close()
   }
 
-  await browser.close()
-
+  console.log('====== finishing scrape =======')
   // If there are duplicates, set the timestamp to run in 5 minutes and do not save
   if ([...new Set(averagePrices)].length < averagePrices.length) {
     const now = new Date().getTime()
