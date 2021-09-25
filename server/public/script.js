@@ -100,21 +100,16 @@ window.getWeeklyAverageHotelPrices = (elementId) => __awaiter(this, void 0, void
             element.appendChild(canvas);
         });
     };
-    if (window.Chart) {
+    const script = document.createElement('script');
+    script.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js';
+    script.integrity =
+        'sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q==';
+    script.crossOrigin = 'anonymous';
+    script.referrerPolicy = 'no-referrer';
+    script.onload = () => {
         createChart();
-    }
-    else {
-        const script = document.createElement('script');
-        script.src =
-            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js';
-        script.integrity =
-            'sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q==';
-        script.crossOrigin = 'anonymous';
-        script.referrerPolicy = 'no-referrer';
-        script.onload = () => {
-            createChart();
-        };
-        document.body.appendChild(script);
-    }
+    };
+    document.body.appendChild(script);
 });
 //# sourceMappingURL=index.js.map
