@@ -5,13 +5,11 @@ const uri = process.env.MONGO_URI
 let client: MongoClient
 
 const getClient = () => {
-  if (!client) {
-    client = new MongoClient(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      maxPoolSize: 3,
-    } as MongoClientOptions)
-  }
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 3,
+  } as MongoClientOptions)
 
   return client
 }
