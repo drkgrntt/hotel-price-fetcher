@@ -4,77 +4,56 @@ import { Price } from './types'
 const uri = process.env.MONGO_URI
 let client: MongoClient
 
-const getClient = () => {
-  if (client) return client
+const getDb = async () => {
+  if (!client) {
+    client = new MongoClient(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      maxPoolSize: 3,
+    } as MongoClientOptions)
+  }
 
-  return new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    maxPoolSize: 3,
-  } as MongoClientOptions)
+  await client.connect()
+  return await client.db()
 }
 
-export const read = async (
-  date: string | string[],
-  callback: Function
-) => {
-  const client = getClient()
+export const read = async (date: string | string[]) => {
+  const db = await getDb()
+  let found
   try {
-    client.connect(async (err) => {
-      if (err) {
-        throw err
-      }
-      let found
-      if (Array.isArray(date)) {
-        const filters = date.map((d) => {
-          return { date: d }
-        })
-        found = await client
-          .db('dragonflyer-hotel-prices')
-          .collection('prices')
-          .find({ $or: filters })
-          .toArray()
-      } else {
-        found = await client
-          .db('dragonflyer-hotel-prices')
-          .collection('prices')
-          .findOne({ date })
-      }
-
-      await callback(found)
-    })
+    if (Array.isArray(date)) {
+      const filters = date.map((d) => {
+        return { date: d }
+      })
+      found = await db
+        .collection('prices')
+        .find({ $or: filters })
+        .toArray()
+    } else {
+      found = await db.collection('prices').findOne({ date })
+    }
   } finally {
     await client.close()
+    return found
   }
 }
 
 export const write = async (...prices: Price[]) => {
-  const client = getClient()
+  const db = await getDb()
   try {
-    client.connect(async (err) => {
-      if (err) {
-        throw err
-      }
+    for (const price of prices) {
+      const found = await db
+        .collection('prices')
+        .findOne({ date: price.date })
 
-      for (const price of prices) {
-        const found = await client
-          .db('dragonflyer-hotel-prices')
+      if (!found) {
+        await db.collection('prices').insertOne(price)
+      } else {
+        await db
           .collection('prices')
-          .findOne({ date: price.date })
-
-        if (!found) {
-          await client
-            .db('dragonflyer-hotel-prices')
-            .collection('prices')
-            .insertOne(price)
-        } else {
-          await client
-            .db('dragonflyer-hotel-prices')
-            .collection('prices')
-            .updateOne({ date: price.date }, { $set: price })
-        }
+          .updateOne({ date: price.date }, { $set: price })
       }
-    })
+    }
   } finally {
     await client.close()
   }

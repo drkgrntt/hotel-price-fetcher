@@ -125,10 +125,9 @@ export const getTodaysAverage = async (
   _: Request,
   res: Response
 ): Promise<void> => {
-  await read(new Date().toDateString(), (price: Price) => {
-    res.send({ price })
-    maybeScrapeAveragePrices()
-  })
+  const price = await read(new Date().toDateString())
+  res.send({ price })
+  maybeScrapeAveragePrices()
 }
 
 export const getThisWeeksAverage = async (
@@ -145,8 +144,7 @@ export const getThisWeeksAverage = async (
     date.setDate(date.getDate() + 1)
   }
 
-  await read(dates, (prices: Price[]) => {
-    res.send({ prices })
-    maybeScrapeAveragePrices()
-  })
+  const prices = await read(dates)
+  res.send({ prices })
+  maybeScrapeAveragePrices()
 }
