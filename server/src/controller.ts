@@ -8,6 +8,7 @@ const maybeScrapeAveragePrices = async (
   numberOfDays: number = 10
 ) => {
   const now = new Date().getTime()
+  console.log(timestamp - now, 1000 * 60 * 60)
   // one scrape per hour
   if (!timestamp || now - timestamp > 1000 * 60 * 60) {
     timestamp = now
