@@ -5,13 +5,13 @@ const uri = process.env.MONGO_URI
 let client: MongoClient
 
 const getClient = () => {
-  client = new MongoClient(uri, {
+  if (client) return client
+
+  return new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     maxPoolSize: 3,
   } as MongoClientOptions)
-
-  return client
 }
 
 export const read = async (
@@ -41,7 +41,7 @@ export const read = async (
           .findOne({ date })
       }
 
-      callback(found)
+      await callback(found)
     })
   } finally {
     await client.close()
