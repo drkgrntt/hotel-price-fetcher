@@ -4,7 +4,11 @@ import express from 'express'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDoc from './swagger.json'
-import { getThisWeeksAverage, getTodaysAverage } from './controller'
+import {
+  getSurveyResults,
+  getThisWeeksAverage,
+  getTodaysAverage,
+} from './controller'
 
 const main = async () => {
   const app = express()
@@ -21,6 +25,8 @@ const main = async () => {
 
   app.get('/api/v1/day', getTodaysAverage)
   app.get('/api/v1/week', getThisWeeksAverage)
+
+  app.get('/api/v1/survey-results', getSurveyResults)
 
   app.listen(parseInt(process.env.PORT), () => {
     console.log(`Server started on ${process.env.PORT}`)

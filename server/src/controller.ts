@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import puppeteer from 'puppeteer'
-import { read, write } from './database'
+import { read, write } from './databases/mongo'
+import { getSurveyData } from './databases/mysql'
 import { Price } from './types'
 
 let timestamp: number
@@ -29,7 +30,7 @@ const scrapeAveragePrices = async (
       '--disable-accelerated-2d-canvas',
       '--no-first-run',
       '--no-zygote',
-      '--single-process', // <- this one doesn't works in Windows
+      '--single-process',
       '--disable-gpu',
     ],
     headless: true,
@@ -95,9 +96,9 @@ const scrapeAveragePrices = async (
     }
   } finally {
     await browser.close()
+    console.log('====== finishing scrape =======')
   }
 
-  console.log('====== finishing scrape =======')
   // If there are duplicates, set the timestamp to run in 5 minutes and do not save
   if ([...new Set(averagePrices)].length < averagePrices.length) {
     const now = new Date().getTime()
@@ -147,4 +148,21 @@ export const getThisWeeksAverage = async (
   const prices = await read(dates)
   res.send({ prices })
   maybeScrapeAveragePrices()
+}
+
+export const getSurveyResults = async (
+  req: Request,
+  res: Response
+) => {
+  const days = (req.query.days as string) ?? '7'
+  if (isNaN(parseInt(days))) {
+    res
+      .status(400)
+      .send({ message: 'Please send a valid number of days' })
+    return
+  }
+
+  const results = await getSurveyData(parseInt(days))
+
+  res.send({ data: results })
 }
