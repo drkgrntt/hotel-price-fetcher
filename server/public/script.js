@@ -112,4 +112,20 @@ window.getWeeklyAverageHotelPrices = (elementId) => __awaiter(this, void 0, void
     };
     document.body.appendChild(script);
 });
+const getSurveyResults = (days = 7) => __awaiter(this, void 0, void 0, function* () {
+    const result = yield (yield fetch(`${BASE_API_URL}/survey-results?days=${days}`)).json();
+    return result.data;
+});
+window.showSurveyResults = (elementIds, trailingDays = 7) => __awaiter(this, void 0, void 0, function* () {
+    const { covidConcern } = elementIds;
+    const data = yield getSurveyResults(trailingDays);
+    if (covidConcern) {
+        const element = document.getElementById(covidConcern);
+        if (element) {
+            const value = data.reduce((total, item) => total + item.covidConcern, 0) /
+                data.length;
+            element.innerHTML = value.toFixed(1).toString();
+        }
+    }
+});
 //# sourceMappingURL=index.js.map
