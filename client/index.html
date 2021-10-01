@@ -28,7 +28,10 @@
     <script>
       window.onload = () => {
         getTodaysAverageHotelPrice('average-hotel-prices')
-        getWeeklyAverageHotelPrices('average-hotel-prices-chart')
+        // getWeeklyAverageHotelPrices('average-hotel-prices-chart')
+        showSurveyResults({
+          covidConcern: 'average-hotel-prices-chart',
+        })
       }
     </script>
   </body>

@@ -1,6 +1,8 @@
 declare var Chart: any
 declare var getTodaysAverageHotelPrice: Function
 declare var getWeeklyAverageHotelPrices: Function
+declare var showSurveyResults: Function
+
 interface Price {
   price: number
   date: string
@@ -140,4 +142,47 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
   }
 
   document.body.appendChild(script)
+}
+
+interface SurveyResult {
+  age: string
+  reside: string
+  showsPerYear: string
+  covidConcern: number
+  shopTkts: string
+  date: Date
+}
+
+const getSurveyResults = async (
+  days: number = 7
+): Promise<SurveyResult[]> => {
+  const result = await (
+    await fetch(`${BASE_API_URL}/survey-results?days=${days}`)
+  ).json()
+  return result.data
+}
+
+interface SurveyResultsElementIds {
+  covidConcern?: string
+}
+window.showSurveyResults = async (
+  elementIds: SurveyResultsElementIds,
+  trailingDays: number = 7
+) => {
+  const { covidConcern } = elementIds
+  const data = await getSurveyResults(trailingDays)
+
+  if (covidConcern) {
+    const element = document.getElementById(covidConcern)
+    if (element) {
+      const value =
+        data.reduce((total, item) => total + item.covidConcern, 0) /
+        data.length
+
+      element.innerHTML = value.toFixed(1).toString()
+      // element.style.color = `rgb(${255 - (value / 10) * 255}, ${
+      //   (value / 10) * 255
+      // }, 0)`
+    }
+  }
 }

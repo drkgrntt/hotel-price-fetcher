@@ -8,7 +8,7 @@ export class SurveyResult {
   age: string
   reside: string
   showsPerYear: string
-  covidConcern: string
+  covidConcern: number
   shopTkts: string
   date: Date
 
@@ -16,7 +16,7 @@ export class SurveyResult {
     this.age = dbRow.demo_age
     this.reside = dbRow.demo_reside
     this.showsPerYear = dbRow.demo_shows_per_year
-    this.covidConcern = dbRow.demo_covid_concern
+    this.covidConcern = parseInt(dbRow.demo_covid_concern)
     this.shopTkts = dbRow.shopTkts
     this.date = dbRow.demo_date
   }
