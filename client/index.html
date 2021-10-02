@@ -16,6 +16,11 @@
         padding: 0;
         overflow: hidden;
       }
+      div {
+        border-bottom: 1px solid black;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+      }
     </style>
   </head>
 
@@ -25,12 +30,19 @@
       id="average-hotel-prices-chart"
       style="max-width: 500px"
     ></div>
+    <div id="age-chart" style="max-width: 500px"></div>
+    <div id="residence-chart" style="max-width: 500px"></div>
+    <div id="shows-per-year-chart" style="max-width: 500px"></div>
+    <div id="covid-concern-chart" style="max-width: 500px"></div>
+    <div id="tkts-discovery-chart" style="max-width: 500px"></div>
+
     <script>
       window.onload = () => {
         getTodaysAverageHotelPrice('average-hotel-prices')
-        // getWeeklyAverageHotelPrices('average-hotel-prices-chart')
+        getWeeklyAverageHotelPrices('average-hotel-prices-chart')
         showSurveyResults({
-          covidConcern: 'average-hotel-prices-chart',
+          ageRanges: 'age-chart',
+          covidConcern: 'covid-concern-chart',
         })
       }
     </script>
