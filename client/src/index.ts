@@ -128,6 +128,124 @@ const createBarChart = (
   element.appendChild(canvas)
 }
 
+const createDoughnutChart = (
+  elementId: string,
+  segmentLabels: string[],
+  dataLabel: string,
+  chartData: number[]
+) => {
+  const element = document.getElementById(elementId)
+  if (!element) {
+    return
+  }
+
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  if (!ctx) {
+    throw new Error('Canvas not supported')
+  }
+
+  const chart = new window.Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: segmentLabels,
+      datasets: [
+        {
+          label: dataLabel,
+          data: chartData,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+  })
+
+  chart.options = {
+    responsive: true,
+    plugins: {
+      legend: 'top',
+    },
+  }
+
+  // Show the chart
+  element.innerHTML = ''
+  element.appendChild(canvas)
+}
+
+const createPieChart = (
+  elementId: string,
+  segmentLabels: string[],
+  dataLabel: string,
+  chartData: number[]
+) => {
+  const element = document.getElementById(elementId)
+  if (!element) {
+    return
+  }
+
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  if (!ctx) {
+    throw new Error('Canvas not supported')
+  }
+
+  const chart = new window.Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: segmentLabels,
+      datasets: [
+        {
+          label: dataLabel,
+          data: chartData,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+  })
+
+  chart.options = {
+    responsive: true,
+    plugins: {
+      legend: 'top',
+    },
+  }
+
+  // Show the chart
+  element.innerHTML = ''
+  element.appendChild(canvas)
+}
+
 window.getTodaysAverageHotelPrice = async (elementId: string) => {
   fetch(`${BASE_API_URL}/day`)
     .then((res) => res.json())
@@ -251,12 +369,51 @@ const showAgeRanges = (elementId: string, data: SurveyResult[]) => {
   )
 }
 
-const showResidences = (elementId: string, data: SurveyResult[]) => {}
+const showResidences = (elementId: string, data: SurveyResult[]) => {
+  const formatted = data.reduce((map, result) => {
+    if (!map[result.reside]) {
+      map[result.reside] = 0
+    }
+    map[result.reside]++
+
+    return map
+  }, {} as Record<string, number>)
+
+  const segmentLabels = Object.keys(formatted)
+  const dataLabel = 'Residences of TKTS patrons'
+  const chartData = Object.values(formatted)
+
+  queueChartFunction(() =>
+    createDoughnutChart(
+      elementId,
+      segmentLabels,
+      dataLabel,
+      chartData
+    )
+  )
+}
 
 const showShowsPerYear = (
   elementId: string,
   data: SurveyResult[]
-) => {}
+) => {
+  const formatted = data.reduce((map, result) => {
+    if (!map[result.showsPerYear]) {
+      map[result.showsPerYear] = 0
+    }
+    map[result.showsPerYear]++
+
+    return map
+  }, {} as Record<string, number>)
+
+  const segmentLabels = Object.keys(formatted)
+  const dataLabel = 'Shows seen per year by TKTS patrons'
+  const chartData = Object.values(formatted)
+
+  queueChartFunction(() =>
+    createPieChart(elementId, segmentLabels, dataLabel, chartData)
+  )
+}
 
 const showCovidConcern = (
   elementId: string,
@@ -278,4 +435,21 @@ const showCovidConcern = (
 const showTktsDiscovery = (
   elementId: string,
   data: SurveyResult[]
-) => {}
+) => {
+  const formatted = data.reduce((map, result) => {
+    if (!map[result.shopTkts]) {
+      map[result.shopTkts] = 0
+    }
+    map[result.shopTkts]++
+
+    return map
+  }, {} as Record<string, number>)
+
+  const segmentLabels = Object.keys(formatted)
+  const dataLabel = 'How TKTS patrons discovered TKTS'
+  const chartData = Object.values(formatted)
+
+  queueChartFunction(() =>
+    createPieChart(elementId, segmentLabels, dataLabel, chartData)
+  )
+}
