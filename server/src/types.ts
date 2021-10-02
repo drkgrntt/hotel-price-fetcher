@@ -17,7 +17,7 @@ export class SurveyResult {
     this.reside = dbRow.demo_reside
     this.showsPerYear = dbRow.demo_shows_per_year
     this.covidConcern = parseInt(dbRow.demo_covid_concern)
-    this.shopTkts = dbRow.shopTkts
+    this.shopTkts = dbRow.demo_shop_tkts
     this.date = dbRow.demo_date
   }
 }
