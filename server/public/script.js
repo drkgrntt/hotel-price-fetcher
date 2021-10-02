@@ -25,7 +25,7 @@ const loadChart = () => {
     };
     document.body.appendChild(script);
 };
-loadChart();
+window.addEventListener('load', () => loadChart());
 const queueChartFunction = (func) => {
     if (chartIsLoaded) {
         func();
