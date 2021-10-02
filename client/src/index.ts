@@ -8,8 +8,8 @@ interface Price {
   date: string
   updated: string
 }
-// const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
-const BASE_API_URL = 'http://localhost:7777/api/v1'
+const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
+// const BASE_API_URL = 'http://localhost:7777/api/v1'
 
 let chartIsLoaded = false
 const chartFunctionQueue: Function[] = []
@@ -28,7 +28,7 @@ const loadChart = () => {
   }
   document.body.appendChild(script)
 }
-loadChart()
+window.addEventListener('load', () => loadChart())
 
 const queueChartFunction = (func: Function) => {
   if (chartIsLoaded) {
