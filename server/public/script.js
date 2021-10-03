@@ -77,22 +77,27 @@ const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelM
             ],
         },
     });
+    const showNumbers = () => {
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        ctx.textBaseline = 'bottom';
+        chart.data.datasets.forEach((dataset, i) => {
+            var meta = chart.getDatasetMeta(i);
+            meta.data.forEach(function (bar, index) {
+                var data = barLabelMutation(dataset.data[index]);
+                ctx.fillText(data, bar.x, bar.y);
+            });
+        });
+    };
     chart.options = {
+        responsive: true,
         events: [],
+        tooltips: {
+            mode: 'point',
+        },
         animation: {
-            duration: 1,
-            onComplete: () => {
-                ctx.textAlign = 'center';
-                ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-                ctx.textBaseline = 'bottom';
-                chart.data.datasets.forEach((dataset, i) => {
-                    var meta = chart.getDatasetMeta(i);
-                    meta.data.forEach(function (bar, index) {
-                        var data = barLabelMutation(dataset.data[index]);
-                        ctx.fillText(data, bar.x, bar.y);
-                    });
-                });
-            },
+            onProgress: showNumbers,
+            onComplete: showNumbers,
         },
         plugins: {
             legend: false,
@@ -149,6 +154,13 @@ const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData) => 
         responsive: true,
         plugins: {
             legend: 'top',
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        return `${context.formattedValue}%`;
+                    },
+                },
+            },
         },
     };
     element.innerHTML = '';
@@ -197,6 +209,13 @@ const createPieChart = (elementId, segmentLabels, dataLabel, chartData) => {
         responsive: true,
         plugins: {
             legend: 'top',
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        return `${context.formattedValue}%`;
+                    },
+                },
+            },
         },
     };
     element.innerHTML = '';
@@ -258,10 +277,19 @@ const showAgeRanges = (elementId, data) => {
         map[result.age]++;
         return map;
     }, {});
-    const columnLabels = Object.keys(formatted);
+    Object.keys(formatted).forEach((key) => {
+        formatted[key] = parseInt(((formatted[key] / data.length) * 100).toString());
+    });
+    const ordered = Object.keys(formatted)
+        .sort()
+        .reduce((obj, key) => {
+        obj[key] = formatted[key];
+        return obj;
+    }, {});
+    const columnLabels = Object.keys(ordered);
     const dataLabel = 'Age ranges of TKTS patrons';
-    const chartData = Object.values(formatted);
-    queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, chartData));
+    const chartData = Object.values(ordered);
+    queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, chartData, (label) => `${label}%`));
 };
 const showResidences = (elementId, data) => {
     const formatted = data.reduce((map, result) => {
@@ -271,6 +299,9 @@ const showResidences = (elementId, data) => {
         map[result.reside]++;
         return map;
     }, {});
+    Object.keys(formatted).forEach((key) => {
+        formatted[key] = parseInt(((formatted[key] / data.length) * 100).toString());
+    });
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'Residences of TKTS patrons';
     const chartData = Object.values(formatted);
@@ -284,6 +315,9 @@ const showShowsPerYear = (elementId, data) => {
         map[result.showsPerYear]++;
         return map;
     }, {});
+    Object.keys(formatted).forEach((key) => {
+        formatted[key] = parseInt(((formatted[key] / data.length) * 100).toString());
+    });
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'Shows seen per year by TKTS patrons';
     const chartData = Object.values(formatted);
@@ -305,6 +339,9 @@ const showTktsDiscovery = (elementId, data) => {
         map[result.shopTkts]++;
         return map;
     }, {});
+    Object.keys(formatted).forEach((key) => {
+        formatted[key] = parseInt(((formatted[key] / data.length) * 100).toString());
+    });
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'How TKTS patrons discovered TKTS';
     const chartData = Object.values(formatted);
