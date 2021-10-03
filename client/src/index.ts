@@ -94,24 +94,30 @@ const createBarChart = (
     },
   })
 
-  chart.options = {
-    events: [],
-    animation: {
-      duration: 1,
-      onComplete: () => {
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-        ctx.textBaseline = 'bottom'
+  const showNumbers = () => {
+    ctx.textAlign = 'center'
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.textBaseline = 'bottom'
 
-        // Loop through each data in the datasets
-        chart.data.datasets.forEach((dataset: any, i: number) => {
-          var meta = chart.getDatasetMeta(i)
-          meta.data.forEach(function (bar: any, index: number) {
-            var data = barLabelMutation(dataset.data[index])
-            ctx.fillText(data, bar.x, bar.y)
-          })
-        })
-      },
+    // Loop through each data in the datasets
+    chart.data.datasets.forEach((dataset: any, i: number) => {
+      var meta = chart.getDatasetMeta(i)
+      meta.data.forEach(function (bar: any, index: number) {
+        var data = barLabelMutation(dataset.data[index])
+        ctx.fillText(data, bar.x, bar.y)
+      })
+    })
+  }
+
+  chart.options = {
+    responsive: true,
+    events: [],
+    tooltips: {
+      mode: 'point',
+    },
+    animation: {
+      onProgress: showNumbers,
+      onComplete: showNumbers,
     },
     plugins: {
       legend: false,
@@ -179,6 +185,13 @@ const createDoughnutChart = (
     responsive: true,
     plugins: {
       legend: 'top',
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            return `${context.formattedValue}%`
+          },
+        },
+      },
     },
   }
 
@@ -238,6 +251,13 @@ const createPieChart = (
     responsive: true,
     plugins: {
       legend: 'top',
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            return `${context.formattedValue}%`
+          },
+        },
+      },
     },
   }
 
@@ -360,12 +380,31 @@ const showAgeRanges = (elementId: string, data: SurveyResult[]) => {
     return map
   }, {} as Record<string, number>)
 
-  const columnLabels = Object.keys(formatted)
+  Object.keys(formatted).forEach((key: string) => {
+    formatted[key] = parseInt(
+      ((formatted[key] / data.length) * 100).toString()
+    )
+  })
+
+  const ordered = Object.keys(formatted)
+    .sort()
+    .reduce((obj, key) => {
+      obj[key] = formatted[key]
+      return obj
+    }, {} as Record<string, number>)
+
+  const columnLabels = Object.keys(ordered)
   const dataLabel = 'Age ranges of TKTS patrons'
-  const chartData = Object.values(formatted)
+  const chartData = Object.values(ordered)
 
   queueChartFunction(() =>
-    createBarChart(elementId, columnLabels, dataLabel, chartData)
+    createBarChart(
+      elementId,
+      columnLabels,
+      dataLabel,
+      chartData,
+      (label: string) => `${label}%`
+    )
   )
 }
 
@@ -378,6 +417,12 @@ const showResidences = (elementId: string, data: SurveyResult[]) => {
 
     return map
   }, {} as Record<string, number>)
+
+  Object.keys(formatted).forEach((key: string) => {
+    formatted[key] = parseInt(
+      ((formatted[key] / data.length) * 100).toString()
+    )
+  })
 
   const segmentLabels = Object.keys(formatted)
   const dataLabel = 'Residences of TKTS patrons'
@@ -405,6 +450,12 @@ const showShowsPerYear = (
 
     return map
   }, {} as Record<string, number>)
+
+  Object.keys(formatted).forEach((key: string) => {
+    formatted[key] = parseInt(
+      ((formatted[key] / data.length) * 100).toString()
+    )
+  })
 
   const segmentLabels = Object.keys(formatted)
   const dataLabel = 'Shows seen per year by TKTS patrons'
@@ -444,6 +495,12 @@ const showTktsDiscovery = (
 
     return map
   }, {} as Record<string, number>)
+
+  Object.keys(formatted).forEach((key: string) => {
+    formatted[key] = parseInt(
+      ((formatted[key] / data.length) * 100).toString()
+    )
+  })
 
   const segmentLabels = Object.keys(formatted)
   const dataLabel = 'How TKTS patrons discovered TKTS'
