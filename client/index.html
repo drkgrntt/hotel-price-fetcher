@@ -15,6 +15,7 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+        background-color: #333;
       }
       div {
         border-bottom: 1px solid black;
@@ -39,14 +40,18 @@
     <script>
       window.onload = () => {
         // getTodaysAverageHotelPrice('average-hotel-prices')
-        // getWeeklyAverageHotelPrices('average-hotel-prices-chart')
-        showSurveyResults({
-          // ageRanges: 'age-chart',
-          residences: 'residence-chart',
-          showsPerYear: 'shows-per-year-chart',
-          covidConcern: 'covid-concern',
-          tktsDiscovery: 'tkts-discovery-chart',
-        })
+        getWeeklyAverageHotelPrices('average-hotel-prices-chart')
+        showSurveyResults(
+          {
+            // ageRanges: 'age-chart',
+            residences: 'residence-chart',
+            showsPerYear: 'shows-per-year-chart',
+            covidConcern: 'covid-concern',
+            tktsDiscovery: 'tkts-discovery-chart',
+          },
+          7,
+          true
+        )
       }
     </script>
   </body>

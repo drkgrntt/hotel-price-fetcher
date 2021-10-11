@@ -8,6 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1';
+const chartColors = [
+    '#3A4778',
+    '#336677',
+    '#786228',
+    '#2E7862',
+    '#784C40',
+];
 let chartIsLoaded = false;
 const chartFunctionQueue = [];
 const loadChart = () => {
@@ -38,7 +45,7 @@ const buildTimestamp = (date) => {
     const timestamp = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     return timestamp;
 };
-const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelMutation = (label) => label.toString()) => {
+const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelMutation = (label) => label.toString(), isDarkTheme = false) => {
     const element = document.getElementById(elementId);
     if (!element) {
         return;
@@ -56,22 +63,7 @@ const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelM
                 {
                     label: dataLabel,
                     data: chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                    ],
+                    backgroundColor: chartColors,
                     borderWidth: 1,
                 },
             ],
@@ -79,7 +71,7 @@ const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelM
     });
     const showNumbers = () => {
         ctx.textAlign = 'center';
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333';
         ctx.textBaseline = 'bottom';
         chart.data.datasets.forEach((dataset, i) => {
             var meta = chart.getDatasetMeta(i);
@@ -105,13 +97,21 @@ const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelM
         scales: {
             y: {
                 beginAtZero: true,
+                ticks: {
+                    color: isDarkTheme ? '#f0f0f0' : '#333',
+                },
+            },
+            x: {
+                ticks: {
+                    color: isDarkTheme ? '#f0f0f0' : '#333',
+                },
             },
         },
     };
     element.innerHTML = '';
     element.appendChild(canvas);
 };
-const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData) => {
+const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData, isDarkTheme = false) => {
     const element = document.getElementById(elementId);
     if (!element) {
         return;
@@ -129,22 +129,7 @@ const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData) => 
                 {
                     label: dataLabel,
                     data: chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                    ],
+                    backgroundColor: chartColors,
                     borderWidth: 1,
                 },
             ],
@@ -153,7 +138,12 @@ const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData) => 
     chart.options = {
         responsive: true,
         plugins: {
-            legend: 'top',
+            legend: {
+                position: 'top',
+                labels: {
+                    color: isDarkTheme ? '#f0f0f0' : '#333',
+                },
+            },
             tooltip: {
                 callbacks: {
                     label: (context) => {
@@ -166,7 +156,7 @@ const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData) => 
     element.innerHTML = '';
     element.appendChild(canvas);
 };
-const createPieChart = (elementId, segmentLabels, dataLabel, chartData) => {
+const createPieChart = (elementId, segmentLabels, dataLabel, chartData, isDarkTheme = false) => {
     const element = document.getElementById(elementId);
     if (!element) {
         return;
@@ -184,22 +174,7 @@ const createPieChart = (elementId, segmentLabels, dataLabel, chartData) => {
                 {
                     label: dataLabel,
                     data: chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                    ],
+                    backgroundColor: chartColors,
                     borderWidth: 1,
                 },
             ],
@@ -208,7 +183,12 @@ const createPieChart = (elementId, segmentLabels, dataLabel, chartData) => {
     chart.options = {
         responsive: true,
         plugins: {
-            legend: 'top',
+            legend: {
+                position: 'top',
+                labels: {
+                    color: isDarkTheme ? '#f0f0f0' : '#333',
+                },
+            },
             tooltip: {
                 callbacks: {
                     label: (context) => {
@@ -234,7 +214,7 @@ window.getTodaysAverageHotelPrice = (elementId) => __awaiter(this, void 0, void 
         }
     });
 });
-window.getWeeklyAverageHotelPrices = (elementId) => __awaiter(this, void 0, void 0, function* () {
+window.getWeeklyAverageHotelPrices = (elementId, isDarkTheme = false) => __awaiter(this, void 0, void 0, function* () {
     fetch(`${BASE_API_URL}/week`)
         .then((res) => res.json())
         .then((res) => {
@@ -243,33 +223,33 @@ window.getWeeklyAverageHotelPrices = (elementId) => __awaiter(this, void 0, void
         const dataLabel = `Average hotel prices near Times Square as of ${timestamp}`;
         const data = res.prices.map((price) => price.price.toFixed(2));
         const barLabelMutation = (label) => `$${label}`;
-        queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, data, barLabelMutation));
+        queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, data, barLabelMutation, isDarkTheme));
     });
 });
 const getSurveyResults = (days = 7) => __awaiter(this, void 0, void 0, function* () {
     const result = yield (yield fetch(`${BASE_API_URL}/survey-results?days=${days}`)).json();
     return result.data;
 });
-window.showSurveyResults = (elementIds, trailingDays = 7) => __awaiter(this, void 0, void 0, function* () {
+window.showSurveyResults = (elementIds, trailingDays = 7, isDarkTheme = false) => __awaiter(this, void 0, void 0, function* () {
     const { ageRanges, residences, showsPerYear, covidConcern, tktsDiscovery, } = elementIds;
     const data = yield getSurveyResults(trailingDays);
     if (ageRanges) {
-        showAgeRanges(ageRanges, data);
+        showAgeRanges(ageRanges, data, isDarkTheme);
     }
     if (residences) {
-        showResidences(residences, data);
+        showResidences(residences, data, isDarkTheme);
     }
     if (showsPerYear) {
-        showShowsPerYear(showsPerYear, data);
+        showShowsPerYear(showsPerYear, data, isDarkTheme);
     }
     if (covidConcern) {
         showCovidConcern(covidConcern, data);
     }
     if (tktsDiscovery) {
-        showTktsDiscovery(tktsDiscovery, data);
+        showTktsDiscovery(tktsDiscovery, data, isDarkTheme);
     }
 });
-const showAgeRanges = (elementId, data) => {
+const showAgeRanges = (elementId, data, isDarkTheme = false) => {
     const formatted = data.reduce((map, result) => {
         if (!map[result.age]) {
             map[result.age] = 0;
@@ -289,9 +269,9 @@ const showAgeRanges = (elementId, data) => {
     const columnLabels = Object.keys(ordered);
     const dataLabel = 'Age ranges of TKTS patrons';
     const chartData = Object.values(ordered);
-    queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, chartData, (label) => `${label}%`));
+    queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, chartData, (label) => `${label}%`, isDarkTheme));
 };
-const showResidences = (elementId, data) => {
+const showResidences = (elementId, data, isDarkTheme = false) => {
     const formatted = data.reduce((map, result) => {
         if (!map[result.reside]) {
             map[result.reside] = 0;
@@ -305,9 +285,9 @@ const showResidences = (elementId, data) => {
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'Residences of TKTS patrons';
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createDoughnutChart(elementId, segmentLabels, dataLabel, chartData));
+    queueChartFunction(() => createDoughnutChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
 };
-const showShowsPerYear = (elementId, data) => {
+const showShowsPerYear = (elementId, data, isDarkTheme = false) => {
     const formatted = data.reduce((map, result) => {
         if (!map[result.showsPerYear]) {
             map[result.showsPerYear] = 0;
@@ -321,7 +301,7 @@ const showShowsPerYear = (elementId, data) => {
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'Shows seen per year by TKTS patrons';
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData));
+    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
 };
 const showCovidConcern = (elementId, data) => {
     const element = document.getElementById(elementId);
@@ -331,7 +311,7 @@ const showCovidConcern = (elementId, data) => {
         element.innerHTML = value.toFixed(1).toString();
     }
 };
-const showTktsDiscovery = (elementId, data) => {
+const showTktsDiscovery = (elementId, data, isDarkTheme = false) => {
     const formatted = data.reduce((map, result) => {
         if (!map[result.shopTkts]) {
             map[result.shopTkts] = 0;
@@ -345,6 +325,6 @@ const showTktsDiscovery = (elementId, data) => {
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'How TKTS patrons discovered TKTS';
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData));
+    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
 };
 //# sourceMappingURL=index.js.map

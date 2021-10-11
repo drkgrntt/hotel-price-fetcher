@@ -10,6 +10,13 @@ interface Price {
 }
 const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
 // const BASE_API_URL = 'http://localhost:7777/api/v1'
+const chartColors = [
+  '#3A4778',
+  '#336677',
+  '#786228',
+  '#2E7862',
+  '#784C40',
+]
 
 let chartIsLoaded = false
 const chartFunctionQueue: Function[] = []
@@ -51,7 +58,8 @@ const createBarChart = (
   columnLabels: string[],
   dataLabel: string,
   chartData: number[],
-  barLabelMutation: Function = (label: number) => label.toString()
+  barLabelMutation: Function = (label: number) => label.toString(),
+  isDarkTheme: boolean = false
 ) => {
   const element = document.getElementById(elementId)
   if (!element) {
@@ -72,22 +80,7 @@ const createBarChart = (
         {
           label: dataLabel,
           data: chartData,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-          ],
+          backgroundColor: chartColors,
           borderWidth: 1,
         },
       ],
@@ -96,7 +89,7 @@ const createBarChart = (
 
   const showNumbers = () => {
     ctx.textAlign = 'center'
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333'
     ctx.textBaseline = 'bottom'
 
     // Loop through each data in the datasets
@@ -125,6 +118,14 @@ const createBarChart = (
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: isDarkTheme ? '#f0f0f0' : '#333',
+        },
+      },
+      x: {
+        ticks: {
+          color: isDarkTheme ? '#f0f0f0' : '#333',
+        },
       },
     },
   }
@@ -138,7 +139,8 @@ const createDoughnutChart = (
   elementId: string,
   segmentLabels: string[],
   dataLabel: string,
-  chartData: number[]
+  chartData: number[],
+  isDarkTheme: boolean = false
 ) => {
   const element = document.getElementById(elementId)
   if (!element) {
@@ -159,22 +161,7 @@ const createDoughnutChart = (
         {
           label: dataLabel,
           data: chartData,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-          ],
+          backgroundColor: chartColors,
           borderWidth: 1,
         },
       ],
@@ -184,7 +171,12 @@ const createDoughnutChart = (
   chart.options = {
     responsive: true,
     plugins: {
-      legend: 'top',
+      legend: {
+        position: 'top',
+        labels: {
+          color: isDarkTheme ? '#f0f0f0' : '#333',
+        },
+      },
       tooltip: {
         callbacks: {
           label: (context: any) => {
@@ -204,7 +196,8 @@ const createPieChart = (
   elementId: string,
   segmentLabels: string[],
   dataLabel: string,
-  chartData: number[]
+  chartData: number[],
+  isDarkTheme: boolean = false
 ) => {
   const element = document.getElementById(elementId)
   if (!element) {
@@ -225,22 +218,7 @@ const createPieChart = (
         {
           label: dataLabel,
           data: chartData,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-          ],
+          backgroundColor: chartColors,
           borderWidth: 1,
         },
       ],
@@ -250,7 +228,12 @@ const createPieChart = (
   chart.options = {
     responsive: true,
     plugins: {
-      legend: 'top',
+      legend: {
+        position: 'top',
+        labels: {
+          color: isDarkTheme ? '#f0f0f0' : '#333',
+        },
+      },
       tooltip: {
         callbacks: {
           label: (context: any) => {
@@ -283,7 +266,10 @@ window.getTodaysAverageHotelPrice = async (elementId: string) => {
     })
 }
 
-window.getWeeklyAverageHotelPrices = async (elementId: string) => {
+window.getWeeklyAverageHotelPrices = async (
+  elementId: string,
+  isDarkTheme: boolean = false
+) => {
   fetch(`${BASE_API_URL}/week`)
     .then((res) => res.json())
     .then((res) => {
@@ -305,7 +291,8 @@ window.getWeeklyAverageHotelPrices = async (elementId: string) => {
           columnLabels,
           dataLabel,
           data,
-          barLabelMutation
+          barLabelMutation,
+          isDarkTheme
         )
       )
     })
@@ -338,7 +325,8 @@ interface SurveyResultsElementIds {
 }
 window.showSurveyResults = async (
   elementIds: SurveyResultsElementIds,
-  trailingDays: number = 7
+  trailingDays: number = 7,
+  isDarkTheme: boolean = false
 ) => {
   const {
     ageRanges,
@@ -350,15 +338,15 @@ window.showSurveyResults = async (
   const data = await getSurveyResults(trailingDays)
 
   if (ageRanges) {
-    showAgeRanges(ageRanges, data)
+    showAgeRanges(ageRanges, data, isDarkTheme)
   }
 
   if (residences) {
-    showResidences(residences, data)
+    showResidences(residences, data, isDarkTheme)
   }
 
   if (showsPerYear) {
-    showShowsPerYear(showsPerYear, data)
+    showShowsPerYear(showsPerYear, data, isDarkTheme)
   }
 
   if (covidConcern) {
@@ -366,11 +354,15 @@ window.showSurveyResults = async (
   }
 
   if (tktsDiscovery) {
-    showTktsDiscovery(tktsDiscovery, data)
+    showTktsDiscovery(tktsDiscovery, data, isDarkTheme)
   }
 }
 
-const showAgeRanges = (elementId: string, data: SurveyResult[]) => {
+const showAgeRanges = (
+  elementId: string,
+  data: SurveyResult[],
+  isDarkTheme: boolean = false
+) => {
   const formatted = data.reduce((map, result) => {
     if (!map[result.age]) {
       map[result.age] = 0
@@ -403,12 +395,17 @@ const showAgeRanges = (elementId: string, data: SurveyResult[]) => {
       columnLabels,
       dataLabel,
       chartData,
-      (label: string) => `${label}%`
+      (label: string) => `${label}%`,
+      isDarkTheme
     )
   )
 }
 
-const showResidences = (elementId: string, data: SurveyResult[]) => {
+const showResidences = (
+  elementId: string,
+  data: SurveyResult[],
+  isDarkTheme: boolean = false
+) => {
   const formatted = data.reduce((map, result) => {
     if (!map[result.reside]) {
       map[result.reside] = 0
@@ -433,14 +430,16 @@ const showResidences = (elementId: string, data: SurveyResult[]) => {
       elementId,
       segmentLabels,
       dataLabel,
-      chartData
+      chartData,
+      isDarkTheme
     )
   )
 }
 
 const showShowsPerYear = (
   elementId: string,
-  data: SurveyResult[]
+  data: SurveyResult[],
+  isDarkTheme: boolean = false
 ) => {
   const formatted = data.reduce((map, result) => {
     if (!map[result.showsPerYear]) {
@@ -462,7 +461,13 @@ const showShowsPerYear = (
   const chartData = Object.values(formatted)
 
   queueChartFunction(() =>
-    createPieChart(elementId, segmentLabels, dataLabel, chartData)
+    createPieChart(
+      elementId,
+      segmentLabels,
+      dataLabel,
+      chartData,
+      isDarkTheme
+    )
   )
 }
 
@@ -477,15 +482,13 @@ const showCovidConcern = (
       data.length
 
     element.innerHTML = value.toFixed(1).toString()
-    // element.style.color = `rgb(${255 - (value / 10) * 255}, ${
-    //   (value / 10) * 255
-    // }, 0)`
   }
 }
 
 const showTktsDiscovery = (
   elementId: string,
-  data: SurveyResult[]
+  data: SurveyResult[],
+  isDarkTheme: boolean = false
 ) => {
   const formatted = data.reduce((map, result) => {
     if (!map[result.shopTkts]) {
@@ -507,6 +510,12 @@ const showTktsDiscovery = (
   const chartData = Object.values(formatted)
 
   queueChartFunction(() =>
-    createPieChart(elementId, segmentLabels, dataLabel, chartData)
+    createPieChart(
+      elementId,
+      segmentLabels,
+      dataLabel,
+      chartData,
+      isDarkTheme
+    )
   )
 }
