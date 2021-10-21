@@ -5,6 +5,7 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDoc from './swagger.json'
 import {
+  getLatestSurveyTimestamp,
   getSurveyResults,
   getThisWeeksAverage,
   getTodaysAverage,
@@ -27,6 +28,7 @@ const main = async () => {
   app.get('/api/v1/week', getThisWeeksAverage)
 
   app.get('/api/v1/survey-results', getSurveyResults)
+  app.get('/api/v1/survey-timestamp', getLatestSurveyTimestamp)
 
   app.listen(parseInt(process.env.PORT), () => {
     console.log(`Server started on ${process.env.PORT}`)

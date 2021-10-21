@@ -20,3 +20,15 @@ export const getSurveyData = async (trailingDays: number) => {
     (r: RowDataPacket) => new SurveyResult(r)
   )
 }
+
+export const getLatestTimestamp = async () => {
+  const db = await createConnection(process.env.MYSQL_URI)
+  await db.connect()
+  const [result] = await db.execute(
+    'SELECT primaryId FROM demo_survey ORDER BY primaryId DESC LIMIT 1;'
+  )
+  await db.end()
+  const [record] = result as RowDataPacket[]
+
+  return record.primaryId
+}
