@@ -56,13 +56,13 @@ const scrapeAveragePrices = async (
 
       const isDisabled = await page.evaluate(
         (el) => el.disabled,
-        prevDayButton[1]
+        prevDayButton[prevDayButton.length - 1]
       )
       if (isDisabled) {
         break
       }
 
-      await prevDayButton[1].click()
+      await prevDayButton[prevDayButton.length - 1].click()
       console.log('previous click')
       await page.waitForTimeout(100)
     }
@@ -90,7 +90,7 @@ const scrapeAveragePrices = async (
         const nextDayButton = await page.$$(
           'button[aria-label="Set Check in one day later."]'
         )
-        await nextDayButton[1].click()
+        await nextDayButton[nextDayButton.length - 1].click()
         console.log('next click')
         await page.waitForTimeout(5000)
       }
