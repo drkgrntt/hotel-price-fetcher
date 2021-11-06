@@ -49,7 +49,7 @@ const scrapeAveragePrices = async (
     // so click back until it is today
     // We don't expect to ever get to 20, we're just setting an arbitrary number
     // to prevent an infinite loop that "while (true) {" would provide
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 100; i++) {
       const prevDayButton = await page.$$(
         'button[aria-label="Set Check out one day earlier."]'
       )
@@ -64,9 +64,10 @@ const scrapeAveragePrices = async (
 
       await prevDayButton[1].click()
       console.log('previous click')
-      await page.waitForTimeout(5000)
+      await page.waitForTimeout(100)
     }
 
+    await page.waitForTimeout(5000)
     for (let i = 0; i < numberOfDays; i++) {
       const prices: number[] = []
 
