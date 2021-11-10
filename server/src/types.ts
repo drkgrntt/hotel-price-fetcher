@@ -11,6 +11,7 @@ export class SurveyResult {
   covidConcern: number
   shopTkts: string
   date: Date
+  noob: string
 
   constructor(dbRow: any) {
     this.age = dbRow.demo_age
@@ -19,6 +20,7 @@ export class SurveyResult {
     this.covidConcern = parseInt(dbRow.demo_covid_concern)
     this.shopTkts = dbRow.demo_shop_tkts
     this.date = dbRow.demo_date
+    this.noob = dbRow.noob
   }
 
   static formatResidence(residence: string) {

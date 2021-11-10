@@ -305,6 +305,7 @@ interface SurveyResult {
   covidConcern: number
   shopTkts: string
   date: Date
+  noob: string
 }
 
 const getSurveyResults = async (
@@ -322,6 +323,7 @@ interface SurveyResultsElementIds {
   showsPerYear?: string
   covidConcern?: string
   tktsDiscovery?: string
+  isFirstShow?: string
 }
 window.showSurveyResults = async (
   elementIds: SurveyResultsElementIds,
@@ -334,6 +336,7 @@ window.showSurveyResults = async (
     showsPerYear,
     covidConcern,
     tktsDiscovery,
+    isFirstShow,
   } = elementIds
   const data = await getSurveyResults(trailingDays)
 
@@ -355,6 +358,10 @@ window.showSurveyResults = async (
 
   if (tktsDiscovery) {
     showTktsDiscovery(tktsDiscovery, data, isDarkTheme)
+  }
+
+  if (isFirstShow) {
+    showIsFirstShow(isFirstShow, data, isDarkTheme)
   }
 }
 
@@ -507,6 +514,41 @@ const showTktsDiscovery = (
 
   const segmentLabels = Object.keys(formatted)
   const dataLabel = 'How TKTS patrons discovered TKTS'
+  const chartData = Object.values(formatted)
+
+  queueChartFunction(() =>
+    createPieChart(
+      elementId,
+      segmentLabels,
+      dataLabel,
+      chartData,
+      isDarkTheme
+    )
+  )
+}
+
+const showIsFirstShow = (
+  elementId: string,
+  data: SurveyResult[],
+  isDarkTheme: boolean = false
+) => {
+  const formatted = data.reduce((map, result) => {
+    if (!map[result.noob]) {
+      map[result.noob] = 0
+    }
+    map[result.noob]++
+
+    return map
+  }, {} as Record<string, number>)
+
+  Object.keys(formatted).forEach((key: string) => {
+    formatted[key] = parseInt(
+      ((formatted[key] / data.length) * 100).toString()
+    )
+  })
+
+  const segmentLabels = Object.keys(formatted)
+  const dataLabel = "If this is a TKTS Patron's first show"
   const chartData = Object.values(formatted)
 
   queueChartFunction(() =>

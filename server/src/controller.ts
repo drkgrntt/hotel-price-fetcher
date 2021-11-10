@@ -47,7 +47,7 @@ const scrapeAveragePrices = async (
 
     // The default page is not necessarily today,
     // so click back until it is today
-    // We don't expect to ever get to 20, we're just setting an arbitrary number
+    // We don't expect to ever get to 100, we're just setting an arbitrary number
     // to prevent an infinite loop that "while (true) {" would provide
     for (let i = 0; i < 100; i++) {
       const prevDayButton = await page.$$(

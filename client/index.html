@@ -36,18 +36,20 @@
     <div id="shows-per-year-chart"></div>
     <div id="covid-concern"></div>
     <div id="tkts-discovery-chart"></div>
+    <div id="first-show-chart"></div>
 
     <script>
       window.onload = () => {
-        // getTodaysAverageHotelPrice('average-hotel-prices')
+        getTodaysAverageHotelPrice('average-hotel-prices')
         getWeeklyAverageHotelPrices('average-hotel-prices-chart')
         showSurveyResults(
           {
-            // ageRanges: 'age-chart',
+            ageRanges: 'age-chart',
             residences: 'residence-chart',
             showsPerYear: 'shows-per-year-chart',
             covidConcern: 'covid-concern',
             tktsDiscovery: 'tkts-discovery-chart',
+            isFirstShow: 'first-show-chart',
           },
           7,
           true
