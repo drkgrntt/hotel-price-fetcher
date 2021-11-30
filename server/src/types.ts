@@ -38,3 +38,29 @@ export class SurveyResult {
     }
   }
 }
+
+export class Show {
+  shId: number
+  name: string
+  date: Date
+  venueId: number
+  venueName: string
+  minListPrice: number
+  maxListPrice: number
+  totalTickets: number
+  totalListings: number
+  updated: Date
+
+  constructor(apiItem: any) {
+    this.shId = apiItem.id
+    this.name = apiItem.name
+    this.date = new Date(apiItem.eventDateLocal)
+    this.venueId = apiItem.venue.id
+    this.venueName = apiItem.venue.name
+    this.minListPrice = apiItem.ticketInfo.minListPrice
+    this.maxListPrice = apiItem.ticketInfo.maxListPrice
+    this.totalTickets = apiItem.ticketInfo.totalTickets
+    this.totalListings = apiItem.ticketInfo.totalListings
+    this.updated = new Date()
+  }
+}

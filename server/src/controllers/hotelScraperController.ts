@@ -1,8 +1,7 @@
 import { Request, Response } from 'express'
 import puppeteer from 'puppeteer'
-import { read, write } from './databases/mongo'
-import { getLatestTimestamp, getSurveyData } from './databases/mysql'
-import { Price } from './types'
+import { read, write } from '../databases/mongo'
+import { Price } from '../types'
 
 let timestamp: number
 const maybeScrapeAveragePrices = async (
@@ -149,29 +148,4 @@ export const getThisWeeksAverage = async (
   const prices = await read(dates)
   res.send({ prices })
   maybeScrapeAveragePrices()
-}
-
-export const getSurveyResults = async (
-  req: Request,
-  res: Response
-) => {
-  const days = (req.query.days as string) ?? '7'
-  if (isNaN(parseInt(days))) {
-    res
-      .status(400)
-      .send({ message: 'Please send a valid number of days' })
-    return
-  }
-
-  const results = await getSurveyData(parseInt(days))
-
-  res.send({ data: results })
-}
-
-export const getLatestSurveyTimestamp = async (
-  _: Request,
-  res: Response
-) => {
-  const timestamp = await getLatestTimestamp()
-  res.send({ data: timestamp })
 }

@@ -5,11 +5,14 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDoc from './swagger.json'
 import {
-  getLatestSurveyTimestamp,
-  getSurveyResults,
   getThisWeeksAverage,
   getTodaysAverage,
-} from './controller'
+} from './controllers/hotelScraperController'
+import {
+  getSurveyResults,
+  getLatestSurveyTimestamp,
+} from './controllers/surveyDataController'
+import { fetchStubhubData } from './controllers/stubhubController'
 
 const main = async () => {
   const app = express()
@@ -29,6 +32,8 @@ const main = async () => {
 
   app.get('/api/v1/survey-results', getSurveyResults)
   app.get('/api/v1/survey-timestamp', getLatestSurveyTimestamp)
+
+  app.get('/api/v1/stubhub', fetchStubhubData)
 
   app.listen(parseInt(process.env.PORT), () => {
     console.log(`Server started on ${process.env.PORT}`)
