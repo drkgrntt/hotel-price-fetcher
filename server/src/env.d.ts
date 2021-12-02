@@ -8,6 +8,5 @@ declare namespace NodeJS {
     SH_EMAIL: string
     SH_PASSWORD: string
     SH_API_KEY: string
-    SH_POSSIBLE_VENUES: string
   }
 }
