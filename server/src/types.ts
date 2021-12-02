@@ -51,16 +51,31 @@ export class Show {
   totalListings: number
   updated: Date
 
-  constructor(apiItem: any) {
-    this.shId = apiItem.id
-    this.name = apiItem.name
-    this.date = new Date(apiItem.eventDateLocal)
-    this.venueId = apiItem.venue.id
-    this.venueName = apiItem.venue.name
-    this.minListPrice = apiItem.ticketInfo.minListPrice
-    this.maxListPrice = apiItem.ticketInfo.maxListPrice
-    this.totalTickets = apiItem.ticketInfo.totalTickets
-    this.totalListings = apiItem.ticketInfo.totalListings
-    this.updated = new Date()
+  constructor(data: any) {
+    this.shId = data.shId
+    this.name = data.name
+    this.date = new Date(data.date)
+    this.venueId = data.venueId
+    this.venueName = data.venueName
+    this.minListPrice = data.minListPrice
+    this.maxListPrice = data.maxListPrice
+    this.totalTickets = data.totalTickets
+    this.totalListings = data.totalListings
+    this.updated = new Date(data.updated)
+  }
+
+  static fromStubhub(apiItem: any) {
+    return new Show({
+      shId: apiItem.id,
+      name: apiItem.name,
+      date: new Date(apiItem.eventDateLocal),
+      venueId: apiItem.venue.id,
+      venueName: apiItem.venue.name,
+      minListPrice: apiItem.ticketInfo.minListPrice,
+      maxListPrice: apiItem.ticketInfo.maxListPrice,
+      totalTickets: apiItem.ticketInfo.totalTickets,
+      totalListings: apiItem.ticketInfo.totalListings,
+      updated: new Date(),
+    })
   }
 }

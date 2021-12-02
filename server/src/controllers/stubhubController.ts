@@ -2,6 +2,51 @@ import { Request, Response } from 'express'
 import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 import { addDays, addMonths, format } from 'date-fns'
 import { Show } from '../types'
+import { write, read } from '../databases/mongo'
+
+// https://www.newyorktheatreguide.com/theatres/broadway
+const VENUES = [
+  'Al Hirschfeld',
+  'Ambassador',
+  'American Airlines',
+  'August Wilson',
+  'Barrymore',
+  'Belasco',
+  'Bernard B. Jacobs',
+  'Booth',
+  'Broadhurst',
+  'Broadway',
+  'Brooks Atkinson',
+  'Circle in the Square',
+  'Cort',
+  'Eugene O’Neill',
+  'Gerald Schoenfeld',
+  'Gershwin',
+  'Golden',
+  'Hayes',
+  'Hudson',
+  'Imperial',
+  'Longacre',
+  'Lyric',
+  'Majestic',
+  'Marquis',
+  'Minskoff',
+  'Music Box',
+  'Nederlander',
+  'Neil Simon',
+  'New Amsterdam',
+  'Palace',
+  'Radio City Music Hall',
+  'Richard Rodgers',
+  'Samuel J. Friedman',
+  'Shubert',
+  'St. James',
+  'Stephen Sondheim',
+  'Studio 54',
+  'Vivian Beaumont',
+  'Walter Kerr',
+  'Winter Garden',
+]
 
 let ACCESS_TOKEN = ''
 let ACCESS_TOKEN_EXPIRY = 0
@@ -30,7 +75,20 @@ const getAccessToken = async () => {
   ACCESS_TOKEN_EXPIRY = addMonths(new Date(), 5).getTime()
 }
 
-export const fetchStubhubData = async (_: Request, res: Response) => {
+let timestamp: number
+export const fetchStubhubData = async (
+  req: Request,
+  res: Response
+) => {
+  const now = new Date().getTime()
+  console.log(now - timestamp, 1000 * 60 * 60)
+
+  // one fetch per hour
+  if (timestamp && now - timestamp < 1000 * 60 * 60) {
+    return getStubhubData(req, res)
+  }
+  timestamp = now
+
   await getAccessToken()
 
   const API_URL = 'https://api.stubhub.com/sellers/search/events/v3'
@@ -43,12 +101,9 @@ export const fetchStubhubData = async (_: Request, res: Response) => {
 
   const start = format(new Date(), 'yyyy-MM-dd')
   const end = format(addDays(new Date(), 30), 'yyyy-MM-dd')
-  const venues = process.env.SH_POSSIBLE_VENUES.split(',').map(
-    (venue) => venue.trim()
-  )
 
   // Make API calls
-  const promises = venues.map((venue) => {
+  const promises = VENUES.map((venue) => {
     config.params = {
       dateLocal: `${start} TO ${end}`,
       city: 'New York',
@@ -65,9 +120,38 @@ export const fetchStubhubData = async (_: Request, res: Response) => {
   const data = responses.reduce((events, response) => {
     return [
       ...events,
-      ...response.data.events.map((show: any) => new Show(show)),
+      ...response.data.events.map((show: any) =>
+        Show.fromStubhub(show)
+      ),
     ]
   }, [] as any[])
 
   res.send({ count: data.length, data })
+
+  // Save to the database
+  write('shShows', data, ['shId', 'date'])
+}
+
+export const getStubhubData = async (req: Request, res: Response) => {
+  const numberOfDays: number =
+    req.query.days &&
+    !isNaN(parseInt(req.query.days as string)) &&
+    parseInt(req.query.days as string) <= 30
+      ? parseInt(req.query.days as string)
+      : 30
+
+  const filters = [
+    {
+      date: {
+        $gte: new Date(),
+        $lte: addDays(new Date(), numberOfDays),
+      },
+    },
+  ]
+  const data = await read('shShows', filters)
+  const shows = data
+    .map((item) => new Show(item))
+    .sort((a, b) => (a.date < b.date ? -1 : 1))
+
+  res.send({ count: shows.length, data: shows })
 }
