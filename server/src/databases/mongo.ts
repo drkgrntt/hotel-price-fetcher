@@ -1,37 +1,40 @@
-import { MongoClient, MongoClientOptions } from 'mongodb'
-import { Price } from '../types'
+import {
+  Filter,
+  Document,
+  MongoClient,
+  MongoClientOptions,
+} from 'mongodb'
 
-export const read = async (date: string | string[]) => {
+export const read = async (
+  collection: string,
+  filters: Filter<Document>[]
+) => {
   const client = new MongoClient(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     maxPoolSize: 3,
   } as MongoClientOptions)
-  let found
 
   try {
     await client.connect()
     const db = await client.db()
 
-    if (Array.isArray(date)) {
-      const filters = date.map((d) => {
-        return { date: d }
-      })
-      found = await db
-        .collection('prices')
-        .find({ $or: filters })
-        .toArray()
-    } else {
-      found = await db.collection('prices').findOne({ date })
-    }
+    const found = await db
+      .collection(collection)
+      .find({ $or: filters })
+      .toArray()
+
+    return found
   } finally {
     await client.close()
   }
-
-  return found
 }
 
-export const write = async (...prices: Price[]) => {
+export const write = async (
+  collection: string,
+  items: Record<string, any>[],
+  filterKeys: string[]
+) => {
   const client = new MongoClient(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -42,19 +45,24 @@ export const write = async (...prices: Price[]) => {
     await client.connect()
     const db = await client.db()
 
-    for (const price of prices) {
-      const found = await db
-        .collection('prices')
-        .findOne({ date: price.date })
-
-      if (!found) {
-        await db.collection('prices').insertOne(price)
-      } else {
-        await db
-          .collection('prices')
-          .updateOne({ date: price.date }, { $set: price })
+    const upserts = items.map((item) => {
+      const filter = filterKeys.reduce<Record<string, any>>(
+        (filters, key) => {
+          filters[key] = item[key]
+          return filters
+        },
+        {}
+      )
+      return {
+        updateOne: {
+          filter,
+          update: { $set: item },
+          upsert: true,
+        },
       }
-    }
+    })
+
+    await db.collection(collection).bulkWrite(upserts as any)
   } finally {
     await client.close()
   }
