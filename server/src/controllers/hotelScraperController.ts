@@ -8,9 +8,9 @@ const maybeScrapeAveragePrices = async (
   numberOfDays: number = 10
 ) => {
   const now = new Date().getTime()
-  console.log(now - timestamp, 1000 * 60 * 60)
-  // one scrape per hour
-  if (!timestamp || now - timestamp > 1000 * 60 * 60) {
+  console.log(now - timestamp, 1000 * 60 * 10)
+  // one scrape per ten minutes
+  if (!timestamp || now - timestamp > 1000 * 60 * 10) {
     timestamp = now
     await scrapeAveragePrices(numberOfDays)
   }
