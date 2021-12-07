@@ -27,23 +27,19 @@ export const showStubhubData = async (
     .then((res) => {
       const date = new Date()
 
-      date.setDate(date.getDate() + 3)
-      const threeDayResults = res.data.filter((show: Show) => {
+      const filterByDate = (show: Show) => {
         const showTime = new Date(show.date)
         return showTime < date
-      })
+      }
+
+      date.setDate(date.getDate() + 3)
+      const threeDayResults = res.data.filter(filterByDate)
 
       date.setDate(date.getDate() + 4)
-      const sevenDayResults = res.data.filter((show: Show) => {
-        const showTime = new Date(show.date)
-        return showTime < date
-      })
+      const sevenDayResults = res.data.filter(filterByDate)
 
       date.setDate(date.getDate() + 23)
-      const thirtyDayResults = res.data.filter((show: Show) => {
-        const showTime = new Date(show.date)
-        return showTime < date
-      })
+      const thirtyDayResults = res.data.filter(filterByDate)
 
       const data: Record<string, any> = {}
       const setData = (key: number, show: Show) => {
@@ -56,73 +52,53 @@ export const showStubhubData = async (
       sevenDayResults.forEach((show: Show) => setData(7, show))
       threeDayResults.forEach((show: Show) => setData(3, show))
 
-      // TODO: Clean up this monstrosity
-      const formattedData = Object.keys(data).map((name: string) => {
-        return {
-          name,
-          threeDaysOut: {
-            totalTickets: data[name][3].reduce(
-              (sum: number, show: Show) => sum + show.totalTickets,
-              0
-            ),
-            minPrice:
-              data[name][3].reduce((minPrice: number, show: Show) => {
-                return show.minListPrice < minPrice
-                  ? show.minListPrice
-                  : minPrice
-              }, data[name][3][0]?.minListPrice) ?? 0,
-            maxPrice:
-              data[name][3].reduce((maxPrice: number, show: Show) => {
-                return show.maxListPrice < maxPrice
-                  ? show.maxListPrice
-                  : maxPrice
-              }, data[name][3][0]?.maxListPrice) ?? 0,
-          },
-          sevenDaysOut: {
-            totalTickets: data[name][7].reduce(
-              (sum: number, show: Show) => sum + show.totalTickets,
-              0
-            ),
-            minPrice:
-              data[name][7].reduce((minPrice: number, show: Show) => {
-                return show.minListPrice < minPrice
-                  ? show.minListPrice
-                  : minPrice
-              }, data[name][7][0]?.minListPrice) ?? 0,
-            maxPrice:
-              data[name][7].reduce((maxPrice: number, show: Show) => {
-                return show.maxListPrice < maxPrice
-                  ? show.maxListPrice
-                  : maxPrice
-              }, data[name][7][0]?.maxListPrice) ?? 0,
-          },
-          thirtyDaysOut: {
-            totalTickets: data[name][30].reduce(
-              (sum: number, show: Show) => sum + show.totalTickets,
-              0
-            ),
-            minPrice:
-              data[name][30].reduce(
-                (minPrice: number, show: Show) => {
-                  return show.minListPrice < minPrice
-                    ? show.minListPrice
-                    : minPrice
-                },
-                data[name][30][0]?.minListPrice
-              ) ?? 0,
-            maxPrice:
-              data[name][30].reduce(
-                (maxPrice: number, show: Show) => {
-                  return show.maxListPrice < maxPrice
-                    ? show.maxListPrice
-                    : maxPrice
-                },
-                data[name][30][0]?.maxListPrice
-              ) ?? 0,
-          },
-        }
-      })
-      formattedData.sort((a, b) => (a.name < b.name ? -1 : 1))
+      const getTotal = (shows: Show[]) => {
+        return shows.reduce(
+          (sum: number, show: Show) => sum + show.totalTickets,
+          0
+        )
+      }
+      const getMinListPrice = (shows: Show[]) => {
+        return (
+          shows.reduce((minPrice: number, show: Show) => {
+            return show.minListPrice < minPrice
+              ? show.minListPrice
+              : minPrice
+          }, shows[0]?.minListPrice) ?? 0
+        )
+      }
+      const getMaxListPrice = (shows: Show[]) => {
+        return (
+          shows.reduce((maxPrice: number, show: Show) => {
+            return show.maxListPrice < maxPrice
+              ? show.maxListPrice
+              : maxPrice
+          }, shows[0]?.maxListPrice) ?? 0
+        )
+      }
+
+      const formattedData = Object.keys(data)
+        .map((name: string) => {
+          return {
+            name,
+            threeDaysOut: {
+              totalTickets: getTotal(data[name][3]),
+              minPrice: getMinListPrice(data[name][3]),
+              maxPrice: getMaxListPrice(data[name][3]),
+            },
+            sevenDaysOut: {
+              totalTickets: getTotal(data[name][7]),
+              minPrice: getMinListPrice(data[name][7]),
+              maxPrice: getMaxListPrice(data[name][7]),
+            },
+            thirtyDaysOut: {
+              totalTickets: getTotal(data[name][30]),
+              minPrice: getMinListPrice(data[name][30]),
+              maxPrice: getMaxListPrice(data[name][30]),
+            },
+          }
+        })
+        .sort((a, b) => (a.name < b.name ? -1 : 1))
 
       element.innerHTML = ''
 
