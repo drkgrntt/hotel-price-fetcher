@@ -37,24 +37,25 @@
     <div id="covid-concern"></div>
     <div id="tkts-discovery-chart"></div>
     <div id="first-show-chart"></div>
+    <div id="stubhub-table"></div>
 
     <script>
       window.onload = () => {
-        // getTodaysAverageHotelPrice('average-hotel-prices')
-        // getWeeklyAverageHotelPrices('average-hotel-prices-chart')
-        // showSurveyResults(
-        //   {
-        //     ageRanges: 'age-chart',
-        //     residences: 'residence-chart',
-        //     showsPerYear: 'shows-per-year-chart',
-        //     covidConcern: 'covid-concern',
-        //     tktsDiscovery: 'tkts-discovery-chart',
-        //     isFirstShow: 'first-show-chart',
-        //   },
-        //   7,
-        //   true
-        // )
-        showStubhubData('average-hotel-prices')
+        getTodaysAverageHotelPrice('average-hotel-prices')
+        getWeeklyAverageHotelPrices('average-hotel-prices-chart')
+        showSurveyResults(
+          {
+            ageRanges: 'age-chart',
+            residences: 'residence-chart',
+            showsPerYear: 'shows-per-year-chart',
+            covidConcern: 'covid-concern',
+            tktsDiscovery: 'tkts-discovery-chart',
+            isFirstShow: 'first-show-chart',
+          },
+          7,
+          true
+        )
+        showStubhubData('stubhub-table')
       }
     </script>
   </body>
