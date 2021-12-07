@@ -10,7 +10,7 @@
     <title>Document</title>
     <script type="module" src="dist/index.js"></script>
     <style>
-      html,
+      /* html,
       body {
         margin: 0;
         padding: 0;
@@ -24,7 +24,7 @@
         display: block;
         max-width: 500px;
         height: auto;
-      }
+      } */
     </style>
   </head>
 
@@ -40,20 +40,21 @@
 
     <script>
       window.onload = () => {
-        getTodaysAverageHotelPrice('average-hotel-prices')
-        getWeeklyAverageHotelPrices('average-hotel-prices-chart')
-        showSurveyResults(
-          {
-            ageRanges: 'age-chart',
-            residences: 'residence-chart',
-            showsPerYear: 'shows-per-year-chart',
-            covidConcern: 'covid-concern',
-            tktsDiscovery: 'tkts-discovery-chart',
-            isFirstShow: 'first-show-chart',
-          },
-          7,
-          true
-        )
+        // getTodaysAverageHotelPrice('average-hotel-prices')
+        // getWeeklyAverageHotelPrices('average-hotel-prices-chart')
+        // showSurveyResults(
+        //   {
+        //     ageRanges: 'age-chart',
+        //     residences: 'residence-chart',
+        //     showsPerYear: 'shows-per-year-chart',
+        //     covidConcern: 'covid-concern',
+        //     tktsDiscovery: 'tkts-discovery-chart',
+        //     isFirstShow: 'first-show-chart',
+        //   },
+        //   7,
+        //   true
+        // )
+        showStubhubData('average-hotel-prices')
       }
     </script>
   </body>

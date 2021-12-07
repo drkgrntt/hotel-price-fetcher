@@ -150,8 +150,19 @@ export const getStubhubData = async (req: Request, res: Response) => {
   ]
   const data = await read('shShows', filters)
   const shows = data
+    .filter(
+      (item) => !item.name.toLowerCase().includes('parking pass')
+    )
     .map((item) => new Show(item))
     .sort((a, b) => (a.date < b.date ? -1 : 1))
+
+  // Name normalization
+  shows.forEach(
+    (item) =>
+      (item.name = item.name
+        .replace(' New York', '')
+        .split(' Tickets (Rescheduled')[0])
+  )
 
   res.send({ count: shows.length, data: shows })
 }
