@@ -8,7 +8,7 @@
     "dev": "nodemon --inspect dist/index.js",
     "build-watch": "tsc -w",
     "watch": "concurrently \"tsc -w\" \"nodemon --inspect dist/index.js\"",
-    "build": "tsc && cd ../client && yarn && tsc && cd ../server && cp ../client/dist/* ./public/ && cp ../client/dist/index.js ./public/script.js"
+    "build": "tsc && cd ../client && yarn && tsc && cd ../server && cp ../client/dist/* ./public/js/"
   },
   "keywords": [],
   "author": "",
