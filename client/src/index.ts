@@ -11,8 +11,8 @@ declare global {
   }
 }
 
-// export const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
-export const BASE_API_URL = 'http://localhost:7777/api/v1'
+export const BASE_API_URL = 'https://hpf.dragonflyer.live/api/v1'
+// export const BASE_API_URL = 'http://localhost:7777/api/v1'
 
 window.getTodaysAverageHotelPrice =
   hotelData.getTodaysAverageHotelPrice
