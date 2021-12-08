@@ -106,21 +106,21 @@ export const showStubhubData = async (
       const thead = document.createElement('thead')
       let tr = document.createElement('tr')
 
-      let td = document.createElement('td')
-      td.innerText = 'Show'
-      tr.appendChild(td)
+      let th = document.createElement('th')
+      th.innerText = 'Show'
+      tr.appendChild(th)
 
-      td = document.createElement('td')
-      td.innerText = '3 days out'
-      tr.appendChild(td)
+      th = document.createElement('th')
+      th.innerText = '3 days out'
+      tr.appendChild(th)
 
-      td = document.createElement('td')
-      td.innerText = '7 days out'
-      tr.appendChild(td)
+      th = document.createElement('th')
+      th.innerText = '7 days out'
+      tr.appendChild(th)
 
-      td = document.createElement('td')
-      td.innerText = '30 days out'
-      tr.appendChild(td)
+      th = document.createElement('th')
+      th.innerText = '30 days out'
+      tr.appendChild(th)
 
       thead.appendChild(tr)
       table.appendChild(thead)
@@ -129,7 +129,7 @@ export const showStubhubData = async (
 
       formattedData.forEach((item) => {
         tr = document.createElement('tr')
-        td = document.createElement('td')
+        let td = document.createElement('td')
         td.innerText = item.name
         tr.appendChild(td)
 
