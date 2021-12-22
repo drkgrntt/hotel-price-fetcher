@@ -1,6 +1,12 @@
 import { Request, Response } from 'express'
 import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
-import { addDays, addMonths, format } from 'date-fns'
+import {
+  subDays,
+  addDays,
+  addMonths,
+  format,
+  startOfDay,
+} from 'date-fns'
 import { Show } from '../types'
 import { write, read } from '../databases/mongo'
 
@@ -19,7 +25,7 @@ const VENUES = [
   'Brooks Atkinson',
   'Circle in the Square',
   'Cort',
-  'Eugene O’Neill',
+  "Eugene O'Neill",
   'Gerald Schoenfeld',
   'Gershwin',
   'Golden',
@@ -83,8 +89,8 @@ export const fetchStubhubData = async (
   const now = new Date().getTime()
   console.log(now - timestamp, 1000 * 60 * 60)
 
-  // one fetch per hour
-  if (timestamp && now - timestamp < 1000 * 60 * 60) {
+  // one fetch per 3 hours
+  if (timestamp && now - timestamp < 1000 * 60 * 60 * 3) {
     return getStubhubData(req, res)
   }
   timestamp = now
@@ -136,18 +142,37 @@ export const getStubhubData = async (req: Request, res: Response) => {
   const numberOfDays: number =
     req.query.days &&
     !isNaN(parseInt(req.query.days as string)) &&
-    parseInt(req.query.days as string) <= 30
+    parseInt(req.query.days as string) <= 60
       ? parseInt(req.query.days as string)
       : 30
 
-  const filters = [
-    {
+  const isPast: boolean =
+    (req.query.past as string)?.toLowerCase() === 'true'
+
+  const skipDays: number =
+    req.query.days &&
+    !isNaN(parseInt(req.query.skip as string)) &&
+    parseInt(req.query.skip as string) <= 60
+      ? parseInt(req.query.skip as string)
+      : 0
+
+  const filters = []
+  if (isPast) {
+    filters.push({
       date: {
-        $gte: new Date(),
+        $lt: startOfDay(subDays(new Date(), skipDays)),
+        $gte: startOfDay(subDays(new Date(), numberOfDays)),
+      },
+    })
+  } else {
+    filters.push({
+      date: {
+        $gte: addDays(new Date(), skipDays),
         $lte: addDays(new Date(), numberOfDays),
       },
-    },
-  ]
+    })
+  }
+
   const data = await read('shShows', filters)
   const shows = data
     .filter(
@@ -161,6 +186,7 @@ export const getStubhubData = async (req: Request, res: Response) => {
     (item) =>
       (item.name = item.name
         .replace(' New York', '')
+        .replace("Clyde's Chicago", "Clyde's")
         .split(' Tickets (Rescheduled')[0])
   )
 
