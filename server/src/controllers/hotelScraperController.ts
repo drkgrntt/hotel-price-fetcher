@@ -66,7 +66,7 @@ const scrapeAveragePrices = async (
       await page.waitForTimeout(100)
     }
 
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(10000)
     for (let i = 0; i < numberOfDays; i++) {
       const prices: number[] = []
 
@@ -91,7 +91,7 @@ const scrapeAveragePrices = async (
         )
         await nextDayButton[nextDayButton.length - 1].click()
         console.log('next click')
-        await page.waitForTimeout(5000)
+        await page.waitForTimeout(10000)
       }
     }
   } finally {
@@ -131,7 +131,7 @@ export const getTodaysAverage = async (
       date: new Date().toDateString(),
     },
   ]
-  const price = await read('prices', filters)
+  const [price] = await read('prices', filters)
   res.send({ price })
   maybeScrapeAveragePrices()
 }
@@ -157,4 +157,30 @@ export const getThisWeeksAverage = async (
   const prices = await read('prices', filters)
   res.send({ prices })
   maybeScrapeAveragePrices()
+}
+
+export const getPastPrices = async (req: Request, res: Response) => {
+  let numberOfDays = 7
+  if (
+    req.query.days &&
+    !isNaN(parseInt(req.query.days as string)) &&
+    parseInt(req.query.days as string) < 60
+  ) {
+    numberOfDays = parseInt(req.query.days as string)
+  }
+
+  const date = new Date()
+  const dates: string[] = []
+
+  for (let i = 0; i < numberOfDays; i++) {
+    date.setDate(date.getDate() - 1)
+    dates.push(date.toDateString())
+  }
+
+  const filters = dates.map((d) => {
+    return { date: d }
+  })
+
+  const prices = await read('prices', filters)
+  res.send({ prices })
 }

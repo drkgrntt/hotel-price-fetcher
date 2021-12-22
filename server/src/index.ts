@@ -5,6 +5,7 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDoc from './swagger.json'
 import {
+  getPastPrices,
   getThisWeeksAverage,
   getTodaysAverage,
 } from './controllers/hotelScraperController'
@@ -40,6 +41,7 @@ const main = async () => {
 
   app.get('/api/v1/hotel-prices/day', getTodaysAverage)
   app.get('/api/v1/hotel-prices/week', getThisWeeksAverage)
+  app.get('/api/v1/hotel-prices/past', getPastPrices)
 
   app.get('/api/v1/survey/results', getSurveyResults)
   app.get('/api/v1/survey/timestamp', getLatestSurveyTimestamp)
