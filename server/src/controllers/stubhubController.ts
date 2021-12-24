@@ -187,6 +187,9 @@ export const getStubhubData = async (req: Request, res: Response) => {
       (item.name = item.name
         .replace(' New York', '')
         .replace("Clyde's Chicago", "Clyde's")
+        .replace(' The Musical', '')
+        .replace(' A New Musical', '')
+        .replace("David Byrne's ", '')
         .split(' Tickets (Rescheduled')[0])
   )
 
