@@ -18,7 +18,6 @@ const VENUES = [
   'August Wilson',
   'Barrymore',
   'Belasco',
-  'Bernard B. Jacobs',
   'Booth',
   'Broadhurst',
   'Broadway',
@@ -32,7 +31,10 @@ const VENUES = [
   'Hayes',
   'Hudson',
   'Imperial',
+  'Jacobs',
   'Longacre',
+  'Lunt-Fontanne',
+  'Lyceum',
   'Lyric',
   'Majestic',
   'Marquis',
@@ -42,7 +44,6 @@ const VENUES = [
   'Neil Simon',
   'New Amsterdam',
   'Palace',
-  'Radio City Music Hall',
   'Richard Rodgers',
   'Samuel J. Friedman',
   'Shubert',
@@ -87,7 +88,7 @@ export const fetchStubhubData = async (
   res: Response
 ) => {
   const now = new Date().getTime()
-  console.log(now - timestamp, 1000 * 60 * 60)
+  console.log(now - timestamp, 1000 * 60 * 60 * 3)
 
   // one fetch per 3 hours
   if (timestamp && now - timestamp < 1000 * 60 * 60 * 3) {
