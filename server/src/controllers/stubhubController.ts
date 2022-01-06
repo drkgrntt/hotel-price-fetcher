@@ -183,16 +183,21 @@ export const getStubhubData = async (req: Request, res: Response) => {
     .sort((a, b) => (a.date < b.date ? -1 : 1))
 
   // Name normalization
-  shows.forEach(
-    (item) =>
-      (item.name = item.name
-        .replace(' New York', '')
-        .replace("Clyde's Chicago", "Clyde's")
-        .replace(' The Musical', '')
-        .replace(' A New Musical', '')
-        .replace("David Byrne's ", '')
-        .split(' Tickets (Rescheduled')[0])
-  )
+  shows.forEach((item) => {
+    item.name = item.name
+      .replace(' New York', '')
+      .replace("Clyde's Chicago", "Clyde's")
+      .replace(' The Musical', '')
+      .replace(' A New Musical', '')
+      .replace("David Byrne's ", '')
+      .split(' Tickets (Rescheduled')[0]
+
+    if (item.name.toLowerCase().includes('tina turner')) {
+      item.name = 'Tina'
+    } else if (item.name.toLowerCase().includes('mj ')) {
+      item.name = 'MJ'
+    }
+  })
 
   res.send({ count: shows.length, data: shows })
 }
