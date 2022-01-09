@@ -49,6 +49,8 @@ export class Show {
   maxListPrice: number
   totalTickets: number
   totalListings: number
+  status: string
+  lastUpdatedDate: Date
   updated: Date
 
   constructor(data: any) {
@@ -61,6 +63,8 @@ export class Show {
     this.maxListPrice = data.maxListPrice
     this.totalTickets = data.totalTickets
     this.totalListings = data.totalListings
+    this.status = data.status
+    this.lastUpdatedDate = new Date(data.lastUpdatedDate)
     this.updated = new Date(data.updated)
   }
 
@@ -75,6 +79,8 @@ export class Show {
       maxListPrice: apiItem.ticketInfo.maxListPrice,
       totalTickets: apiItem.ticketInfo.totalTickets,
       totalListings: apiItem.ticketInfo.totalListings,
+      status: apiItem.status,
+      lastUpdatedDate: apiItem.lastUpdatedDate,
       updated: new Date(),
     })
   }
