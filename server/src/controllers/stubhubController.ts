@@ -19,7 +19,6 @@ const VENUE_NAMES = [
   'Hudson',
   'Marquis',
   'Palace',
-  'Friedman', // not showing up yet
 ]
 const VENUE_IDS = [
   9727, // 'Al Hirschfeld',
@@ -55,7 +54,7 @@ const VENUE_IDS = [
   5623, // 'New Amsterdam',
   // 'Palace',
   4041, // 'Richard Rodgers',
-  // 'Friedman',
+  8487, // 'Friedman',
   3941, // 'Shubert',
   3801, // 'St. James',
   161125, // 'Stephen Sondheim',
