@@ -44,7 +44,12 @@ export const showStubhubData = async (
       const data: Record<string, any> = {}
       const setData = (key: number, show: Show) => {
         if (!data[show.name]) {
-          data[show.name] = { 3: [], 7: [], 30: [] }
+          data[show.name] = {
+            3: [],
+            7: [],
+            30: [],
+            venueName: show.venueName,
+          }
         }
         data[show.name][key].push(show)
       }
@@ -81,6 +86,7 @@ export const showStubhubData = async (
         .map((name: string) => {
           return {
             name,
+            venueName: data[name].venueName,
             threeDaysOut: {
               totalTickets: getTotal(data[name][3]),
               minPrice: getMinListPrice(data[name][3]),
@@ -130,7 +136,7 @@ export const showStubhubData = async (
       formattedData.forEach((item) => {
         tr = document.createElement('tr')
         let td = document.createElement('td')
-        td.innerText = item.name
+        td.innerHTML = `<span class="stubhub-table-show-name">${item.name}</span><br><span class="stubhub-table-venue-name">${item.venueName}</span>`
         tr.appendChild(td)
 
         td = document.createElement('td')

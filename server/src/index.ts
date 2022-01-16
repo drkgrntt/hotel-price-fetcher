@@ -16,6 +16,7 @@ import {
 import {
   fetchStubhubData,
   getStubhubData,
+  stubhubTest,
 } from './controllers/stubhubController'
 
 const main = async () => {
@@ -48,6 +49,7 @@ const main = async () => {
 
   app.get('/api/v1/stubhub', fetchStubhubData)
   app.get('/api/v1/stubhub/data', getStubhubData)
+  app.get('/api/v1/stubhub/test', stubhubTest)
 
   app.listen(parseInt(process.env.PORT), () => {
     console.log(`Server started on ${process.env.PORT}`)
