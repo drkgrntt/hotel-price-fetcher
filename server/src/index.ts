@@ -19,7 +19,7 @@ import {
   stubhubTest,
 } from './controllers/stubhubController'
 
-const main = async () => {
+const main = () => {
   const app = express()
   app.use(cors())
   app.use(json())
