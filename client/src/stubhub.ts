@@ -166,6 +166,54 @@ export const showStubhubData = async (
         tbody.appendChild(tr)
       })
 
+      // Create row for averages
+      tr = document.createElement('tr')
+      let td = document.createElement('td')
+      td.innerHTML = `<span class="stubhub-table-show-name">Averages</span>`
+      tr.appendChild(td)
+
+      const getAverage = (
+        shows: Show[],
+        field: 'minListPrice' | 'maxListPrice'
+      ) => {
+        return (
+          shows.reduce((total, show) => total + show[field], 0) /
+          shows.length
+        )
+      }
+
+      td = document.createElement('td')
+      td.innerHTML = `Min: $${getAverage(
+        threeDayResults.filter((show: Show) => show.minListPrice),
+        'minListPrice'
+      ).toFixed(2)}<br>Max: $${getAverage(
+        threeDayResults.filter((show: Show) => show.maxListPrice),
+        'maxListPrice'
+      ).toFixed(2)}`
+      tr.appendChild(td)
+
+      td = document.createElement('td')
+      td.innerHTML = `Min: $${getAverage(
+        sevenDayResults.filter((show: Show) => show.minListPrice),
+        'minListPrice'
+      ).toFixed(2)}<br>Max: $${getAverage(
+        sevenDayResults.filter((show: Show) => show.maxListPrice),
+        'maxListPrice'
+      ).toFixed(2)}`
+      tr.appendChild(td)
+
+      td = document.createElement('td')
+      td.innerHTML = `Min: $${getAverage(
+        thirtyDayResults.filter((show: Show) => show.minListPrice),
+        'minListPrice'
+      ).toFixed(2)}<br>Max: $${getAverage(
+        thirtyDayResults.filter((show: Show) => show.maxListPrice),
+        'maxListPrice'
+      ).toFixed(2)}`
+      tr.appendChild(td)
+
+      tbody.appendChild(tr)
+
       table.appendChild(tbody)
       element.appendChild(table)
     })
