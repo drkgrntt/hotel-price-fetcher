@@ -66,16 +66,16 @@ export const showStubhubData = async (
       const getMinListPrice = (shows: Show[]) => {
         return (
           shows.reduce((minPrice: number, show: Show) => {
-            return show.minListPrice < minPrice
+            return show.minListPrice && show.minListPrice < minPrice
               ? show.minListPrice
               : minPrice
-          }, shows[0]?.minListPrice) ?? 0
+          }, shows[0]?.minListPrice) ?? 1000
         )
       }
       const getMaxListPrice = (shows: Show[]) => {
         return (
           shows.reduce((maxPrice: number, show: Show) => {
-            return show.maxListPrice < maxPrice
+            return show.maxListPrice > maxPrice
               ? show.maxListPrice
               : maxPrice
           }, shows[0]?.maxListPrice) ?? 0
