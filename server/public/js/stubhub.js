@@ -48,15 +48,15 @@ export const showStubhubData = (elementId, days = 30) => __awaiter(void 0, void 
         const getMinListPrice = (shows) => {
             var _a, _b;
             return ((_b = shows.reduce((minPrice, show) => {
-                return show.minListPrice < minPrice
+                return show.minListPrice && show.minListPrice < minPrice
                     ? show.minListPrice
                     : minPrice;
-            }, (_a = shows[0]) === null || _a === void 0 ? void 0 : _a.minListPrice)) !== null && _b !== void 0 ? _b : 0);
+            }, (_a = shows[0]) === null || _a === void 0 ? void 0 : _a.minListPrice)) !== null && _b !== void 0 ? _b : 1000);
         };
         const getMaxListPrice = (shows) => {
             var _a, _b;
             return ((_b = shows.reduce((maxPrice, show) => {
-                return show.maxListPrice < maxPrice
+                return show.maxListPrice > maxPrice
                     ? show.maxListPrice
                     : maxPrice;
             }, (_a = shows[0]) === null || _a === void 0 ? void 0 : _a.maxListPrice)) !== null && _b !== void 0 ? _b : 0);
@@ -119,6 +119,24 @@ export const showStubhubData = (elementId, days = 30) => __awaiter(void 0, void 
             tr.appendChild(td);
             tbody.appendChild(tr);
         });
+        tr = document.createElement('tr');
+        let td = document.createElement('td');
+        td.innerHTML = `<span class="stubhub-table-show-name">Averages</span>`;
+        tr.appendChild(td);
+        const getAverage = (shows, field) => {
+            return (shows.reduce((total, show) => total + show[field], 0) /
+                shows.length);
+        };
+        td = document.createElement('td');
+        td.innerHTML = `Min: $${getAverage(threeDayResults.filter((show) => show.minListPrice), 'minListPrice').toFixed(2)}<br>Max: $${getAverage(threeDayResults.filter((show) => show.maxListPrice), 'maxListPrice').toFixed(2)}`;
+        tr.appendChild(td);
+        td = document.createElement('td');
+        td.innerHTML = `Min: $${getAverage(sevenDayResults.filter((show) => show.minListPrice), 'minListPrice').toFixed(2)}<br>Max: $${getAverage(sevenDayResults.filter((show) => show.maxListPrice), 'maxListPrice').toFixed(2)}`;
+        tr.appendChild(td);
+        td = document.createElement('td');
+        td.innerHTML = `Min: $${getAverage(thirtyDayResults.filter((show) => show.minListPrice), 'minListPrice').toFixed(2)}<br>Max: $${getAverage(thirtyDayResults.filter((show) => show.maxListPrice), 'maxListPrice').toFixed(2)}`;
+        tr.appendChild(td);
+        tbody.appendChild(tr);
         table.appendChild(tbody);
         element.appendChild(table);
     });
