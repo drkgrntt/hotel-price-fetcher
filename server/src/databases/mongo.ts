@@ -35,6 +35,8 @@ export const write = async (
   items: Record<string, any>[],
   filterKeys: string[]
 ) => {
+  if (!items.length) return
+
   const client = new MongoClient(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
