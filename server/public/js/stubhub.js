@@ -107,19 +107,27 @@ export const showStubhubData = (elementId, days = 30) => __awaiter(void 0, void 
         thead.appendChild(tr);
         table.appendChild(thead);
         const tbody = document.createElement('tbody');
+        const getRange = (itemData) => {
+            if (itemData.totalTickets) {
+                return `$${itemData.minPrice.toFixed(2)} - $${itemData.maxPrice.toFixed(2)}`;
+            }
+            else {
+                return 'N/A';
+            }
+        };
         formattedData.forEach((item) => {
             tr = document.createElement('tr');
             let td = document.createElement('td');
             td.innerHTML = `<span class="stubhub-table-show-name">${item.name}</span><br><span class="stubhub-table-venue-name">${item.venueName}</span>`;
             tr.appendChild(td);
             td = document.createElement('td');
-            td.innerHTML = `${item.threeDaysOut.totalTickets} tickets<br />$${item.threeDaysOut.minPrice.toFixed(2)} - $${item.threeDaysOut.maxPrice.toFixed(2)}`;
+            td.innerHTML = `${item.threeDaysOut.totalTickets} tickets<br />${getRange(item.threeDaysOut)}`;
             tr.appendChild(td);
             td = document.createElement('td');
-            td.innerHTML = `${item.sevenDaysOut.totalTickets} tickets<br />$${item.sevenDaysOut.minPrice.toFixed(2)} - $${item.sevenDaysOut.maxPrice.toFixed(2)}`;
+            td.innerHTML = `${item.sevenDaysOut.totalTickets} tickets<br />${getRange(item.sevenDaysOut)}`;
             tr.appendChild(td);
             td = document.createElement('td');
-            td.innerHTML = `${item.thirtyDaysOut.totalTickets} tickets<br />$${item.thirtyDaysOut.minPrice.toFixed(2)} - $${item.thirtyDaysOut.maxPrice.toFixed(2)}`;
+            td.innerHTML = `${item.thirtyDaysOut.totalTickets} tickets<br />${getRange(item.thirtyDaysOut)}`;
             tr.appendChild(td);
             tbody.appendChild(tr);
         });
