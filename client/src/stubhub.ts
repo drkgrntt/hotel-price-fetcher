@@ -133,6 +133,20 @@ export const showStubhubData = async (
 
       const tbody = document.createElement('tbody')
 
+      const getRange = (itemData: {
+        totalTickets: number
+        minPrice: number
+        maxPrice: number
+      }) => {
+        if (itemData.totalTickets) {
+          return `$${itemData.minPrice.toFixed(
+            2
+          )} - $${itemData.maxPrice.toFixed(2)}`
+        } else {
+          return 'N/A'
+        }
+      }
+
       formattedData.forEach((item) => {
         tr = document.createElement('tr')
         let td = document.createElement('td')
@@ -142,25 +156,19 @@ export const showStubhubData = async (
         td = document.createElement('td')
         td.innerHTML = `${
           item.threeDaysOut.totalTickets
-        } tickets<br />$${item.threeDaysOut.minPrice.toFixed(
-          2
-        )} - $${item.threeDaysOut.maxPrice.toFixed(2)}`
+        } tickets<br />${getRange(item.threeDaysOut)}`
         tr.appendChild(td)
 
         td = document.createElement('td')
         td.innerHTML = `${
           item.sevenDaysOut.totalTickets
-        } tickets<br />$${item.sevenDaysOut.minPrice.toFixed(
-          2
-        )} - $${item.sevenDaysOut.maxPrice.toFixed(2)}`
+        } tickets<br />${getRange(item.sevenDaysOut)}`
         tr.appendChild(td)
 
         td = document.createElement('td')
         td.innerHTML = `${
           item.thirtyDaysOut.totalTickets
-        } tickets<br />$${item.thirtyDaysOut.minPrice.toFixed(
-          2
-        )} - $${item.thirtyDaysOut.maxPrice.toFixed(2)}`
+        } tickets<br />${getRange(item.thirtyDaysOut)}`
         tr.appendChild(td)
 
         tbody.appendChild(tr)
