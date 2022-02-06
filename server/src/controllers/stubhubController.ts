@@ -218,9 +218,10 @@ export const getStubhubData = async (req: Request, res: Response) => {
       .replace(' New York', '')
       .replace("Clyde's Chicago", "Clyde's")
       .replace(' The Musical', '')
+      .replace(' Tickets', '')
       .replace(' A New Musical', '')
       .replace("David Byrne's ", '')
-      .split(' Tickets (Rescheduled')[0]
+      .split(' (Rescheduled')[0]
 
     if (item.name.toLowerCase().includes('tina turner')) {
       item.name = 'Tina'
