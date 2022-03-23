@@ -87,7 +87,13 @@ export const showStubhubData = (elementId, days = 30) => __awaiter(void 0, void 
                 },
             };
         })
+            .filter((show) => {
+            return (show.threeDaysOut.totalTickets ||
+                show.sevenDaysOut.totalTickets ||
+                show.thirtyDaysOut.totalTickets);
+        })
             .sort((a, b) => (a.name < b.name ? -1 : 1));
+        console.log(formattedData);
         element.innerHTML = '';
         const table = document.createElement('table');
         const thead = document.createElement('thead');

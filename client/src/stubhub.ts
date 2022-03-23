@@ -104,7 +104,16 @@ export const showStubhubData = async (
             },
           }
         })
+        .filter((show) => {
+          return (
+            show.threeDaysOut.totalTickets ||
+            show.sevenDaysOut.totalTickets ||
+            show.thirtyDaysOut.totalTickets
+          )
+        })
         .sort((a, b) => (a.name < b.name ? -1 : 1))
+
+      console.log(formattedData)
 
       element.innerHTML = ''
 
