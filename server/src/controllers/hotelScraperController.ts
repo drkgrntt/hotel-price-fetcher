@@ -49,19 +49,17 @@ const scrapeAveragePrices = async (
     // We don't expect to ever get to 100, we're just setting an arbitrary number
     // to prevent an infinite loop that "while (true) {" would provide
     for (let i = 0; i < 100; i++) {
-      const prevDayButton = await page.$$(
-        'button[aria-label="Set Check out one day earlier."]'
-      )
+      const prevDayButton = await page.$$('button[jsname="a1ZUMe"]')
 
       const isDisabled = await page.evaluate(
         (el) => el.disabled,
-        prevDayButton[prevDayButton.length - 1]
+        prevDayButton[6]
       )
       if (isDisabled) {
         break
       }
 
-      await prevDayButton[prevDayButton.length - 1].click()
+      await prevDayButton[6].click()
       console.log('previous click')
       await page.waitForTimeout(100)
     }
@@ -86,10 +84,8 @@ const scrapeAveragePrices = async (
       console.log('price: ', averagePrice)
       // Click to the next day
       if (i < numberOfDays - 1) {
-        const nextDayButton = await page.$$(
-          'button[aria-label="Set Check in one day later."]'
-        )
-        await nextDayButton[nextDayButton.length - 1].click()
+        const nextDayButton = await page.$$('button[jsname="a1ZUMe"]')
+        await nextDayButton[5].click()
         console.log('next click')
         await page.waitForTimeout(10000)
       }
