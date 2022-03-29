@@ -157,12 +157,12 @@ export const getThisWeeksAverage = async (
 
 export const getPastPrices = async (req: Request, res: Response) => {
   let numberOfDays = 7
-  if (
-    req.query.days &&
-    !isNaN(parseInt(req.query.days as string)) &&
-    parseInt(req.query.days as string) < 60
-  ) {
+  if (req.query.days && !isNaN(parseInt(req.query.days as string))) {
     numberOfDays = parseInt(req.query.days as string)
+  }
+  let skip = 0
+  if (req.query.skip && !isNaN(parseInt(req.query.skip as string))) {
+    skip = parseInt(req.query.skip as string)
   }
 
   const date = new Date()
@@ -170,6 +170,7 @@ export const getPastPrices = async (req: Request, res: Response) => {
 
   for (let i = 0; i < numberOfDays; i++) {
     date.setDate(date.getDate() - 1)
+    if (i < skip) continue
     dates.push(date.toDateString())
   }
 

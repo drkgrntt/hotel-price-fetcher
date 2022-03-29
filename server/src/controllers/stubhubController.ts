@@ -165,9 +165,7 @@ export const fetchStubhubData = async (
 
 export const getStubhubData = async (req: Request, res: Response) => {
   const numberOfDays: number =
-    req.query.days &&
-    !isNaN(parseInt(req.query.days as string)) &&
-    parseInt(req.query.days as string) <= 60
+    req.query.days && !isNaN(parseInt(req.query.days as string))
       ? parseInt(req.query.days as string)
       : 30
 
@@ -175,9 +173,7 @@ export const getStubhubData = async (req: Request, res: Response) => {
     (req.query.past as string)?.toLowerCase() === 'true'
 
   const skipDays: number =
-    req.query.days &&
-    !isNaN(parseInt(req.query.skip as string)) &&
-    parseInt(req.query.skip as string) <= 60
+    req.query.days && !isNaN(parseInt(req.query.skip as string))
       ? parseInt(req.query.skip as string)
       : 0
 
