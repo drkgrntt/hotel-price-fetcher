@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BASE_API_URL } from './index.js';
-import { createBarChart, createDoughnutChart, createPieChart, queueChartFunction, } from './chartUtil.js';
+import { createBarChart, createPieChart, queueChartFunction, } from './chartUtil.js';
 const getSurveyResults = (days = 7) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield (yield fetch(`${BASE_API_URL}/survey/results?days=${days}`)).json();
     return result.data;
@@ -71,7 +71,7 @@ const showResidences = (elementId, data, isDarkTheme = false) => {
     const segmentLabels = Object.keys(formatted);
     const dataLabel = 'Residences of TKTS patrons';
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createDoughnutChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
+    queueChartFunction(() => createBarChart(elementId, segmentLabels, dataLabel, chartData, (a) => `${a}%`, isDarkTheme));
 };
 const showShowsPerYear = (elementId, data, isDarkTheme = false) => {
     const formatted = data.reduce((map, result) => {
@@ -127,6 +127,6 @@ const showIsFirstShow = (elementId, data, isDarkTheme = false) => {
     const segmentLabels = Object.keys(formatted);
     const dataLabel = "If this is a TKTS Patron's first show";
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
+    queueChartFunction(() => createBarChart(elementId, segmentLabels, dataLabel, chartData, (a) => `${a}%`, isDarkTheme));
 };
 //# sourceMappingURL=surveyData.js.map

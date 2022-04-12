@@ -1,7 +1,7 @@
 import { BASE_API_URL } from './index.js'
 import {
   createBarChart,
-  createDoughnutChart,
+  // createDoughnutChart,
   createPieChart,
   queueChartFunction,
 } from './chartUtil.js'
@@ -140,12 +140,22 @@ const showResidences = (
   const dataLabel = 'Residences of TKTS patrons'
   const chartData = Object.values(formatted)
 
+  // queueChartFunction(() =>
+  //   createDoughnutChart(
+  //     elementId,
+  //     segmentLabels,
+  //     dataLabel,
+  //     chartData,
+  //     isDarkTheme
+  //   )
+  // )
   queueChartFunction(() =>
-    createDoughnutChart(
+    createBarChart(
       elementId,
       segmentLabels,
       dataLabel,
       chartData,
+      (a: string) => `${a}%`,
       isDarkTheme
     )
   )
@@ -259,12 +269,22 @@ const showIsFirstShow = (
   const dataLabel = "If this is a TKTS Patron's first show"
   const chartData = Object.values(formatted)
 
+  // queueChartFunction(() =>
+  //   createPieChart(
+  //     elementId,
+  //     segmentLabels,
+  //     dataLabel,
+  //     chartData,
+  //     isDarkTheme
+  //   )
+  // )
   queueChartFunction(() =>
-    createPieChart(
+    createBarChart(
       elementId,
       segmentLabels,
       dataLabel,
       chartData,
+      (a: string) => `${a}%`,
       isDarkTheme
     )
   )
