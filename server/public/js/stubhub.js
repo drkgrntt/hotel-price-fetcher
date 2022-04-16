@@ -94,14 +94,13 @@ export const showStubhubData = (elementId, days = 30) => __awaiter(void 0, void 
         })
             .sort((a, b) => (a.name < b.name ? -1 : 1));
         element.innerHTML = '';
-        const avgTable = createAveragesTable(threeDayResults, sevenDayResults, thirtyDayResults);
-        const table = createShowsTable(formattedData);
-        element.appendChild(avgTable);
+        const table = document.createElement('table');
+        addAveragesToTable(table, threeDayResults, sevenDayResults, thirtyDayResults);
+        addShowsToTable(table, formattedData);
         element.appendChild(table);
     });
 });
-const createAveragesTable = (threeDayResults, sevenDayResults, thirtyDayResults) => {
-    const avgTable = document.createElement('table');
+const addAveragesToTable = (table, threeDayResults, sevenDayResults, thirtyDayResults) => {
     const avgThead = document.createElement('thead');
     let tr = document.createElement('tr');
     let th = document.createElement('th');
@@ -117,7 +116,7 @@ const createAveragesTable = (threeDayResults, sevenDayResults, thirtyDayResults)
     th.innerText = '30 days out';
     tr.appendChild(th);
     avgThead.appendChild(tr);
-    avgTable.appendChild(avgThead);
+    table.appendChild(avgThead);
     const avgTbody = document.createElement('tbody');
     tr = document.createElement('tr');
     let td = document.createElement('td');
@@ -137,11 +136,9 @@ const createAveragesTable = (threeDayResults, sevenDayResults, thirtyDayResults)
     td.innerHTML = `Min: $${getAverage(thirtyDayResults.filter((show) => show.minListPrice), 'minListPrice').toFixed(2)}<br>Max: $${getAverage(thirtyDayResults.filter((show) => show.maxListPrice), 'maxListPrice').toFixed(2)}`;
     tr.appendChild(td);
     avgTbody.appendChild(tr);
-    avgTable.appendChild(avgTbody);
-    return avgTable;
+    table.appendChild(avgTbody);
 };
-const createShowsTable = (formattedData) => {
-    const table = document.createElement('table');
+const addShowsToTable = (table, formattedData) => {
     const thead = document.createElement('thead');
     let tr = document.createElement('tr');
     let th = document.createElement('th');
@@ -185,6 +182,5 @@ const createShowsTable = (formattedData) => {
     });
     tbody.appendChild(tr);
     table.appendChild(tbody);
-    return table;
 };
 //# sourceMappingURL=stubhub.js.map

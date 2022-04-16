@@ -115,25 +115,26 @@ export const showStubhubData = async (
 
       element.innerHTML = ''
 
-      const avgTable = createAveragesTable(
+      const table = document.createElement('table')
+      addAveragesToTable(
+        table,
         threeDayResults,
         sevenDayResults,
         thirtyDayResults
       )
-      const table = createShowsTable(formattedData)
+      addShowsToTable(table, formattedData)
 
-      element.appendChild(avgTable)
       element.appendChild(table)
     })
 }
 
-const createAveragesTable = (
+const addAveragesToTable = (
+  table: HTMLTableElement,
   threeDayResults: any,
   sevenDayResults: any,
   thirtyDayResults: any
 ) => {
   // Create table for averages
-  const avgTable = document.createElement('table')
   const avgThead = document.createElement('thead')
   let tr = document.createElement('tr')
 
@@ -154,7 +155,7 @@ const createAveragesTable = (
   tr.appendChild(th)
 
   avgThead.appendChild(tr)
-  avgTable.appendChild(avgThead)
+  table.appendChild(avgThead)
 
   const avgTbody = document.createElement('tbody')
 
@@ -204,13 +205,13 @@ const createAveragesTable = (
   tr.appendChild(td)
 
   avgTbody.appendChild(tr)
-  avgTable.appendChild(avgTbody)
-
-  return avgTable
+  table.appendChild(avgTbody)
 }
 
-const createShowsTable = (formattedData: any) => {
-  const table = document.createElement('table')
+const addShowsToTable = (
+  table: HTMLTableElement,
+  formattedData: any
+) => {
   const thead = document.createElement('thead')
   let tr = document.createElement('tr')
 
@@ -278,6 +279,4 @@ const createShowsTable = (formattedData: any) => {
 
   tbody.appendChild(tr)
   table.appendChild(tbody)
-
-  return table
 }
