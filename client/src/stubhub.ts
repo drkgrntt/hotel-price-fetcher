@@ -113,125 +113,171 @@ export const showStubhubData = async (
         })
         .sort((a, b) => (a.name < b.name ? -1 : 1))
 
-      console.log(formattedData)
-
       element.innerHTML = ''
 
-      const table = document.createElement('table')
-      const thead = document.createElement('thead')
-      let tr = document.createElement('tr')
+      const avgTable = createAveragesTable(
+        threeDayResults,
+        sevenDayResults,
+        thirtyDayResults
+      )
+      const table = createShowsTable(formattedData)
 
-      let th = document.createElement('th')
-      th.innerText = 'Show'
-      tr.appendChild(th)
-
-      th = document.createElement('th')
-      th.innerText = '3 days out'
-      tr.appendChild(th)
-
-      th = document.createElement('th')
-      th.innerText = '7 days out'
-      tr.appendChild(th)
-
-      th = document.createElement('th')
-      th.innerText = '30 days out'
-      tr.appendChild(th)
-
-      thead.appendChild(tr)
-      table.appendChild(thead)
-
-      const tbody = document.createElement('tbody')
-
-      const getRange = (itemData: {
-        totalTickets: number
-        minPrice: number
-        maxPrice: number
-      }) => {
-        if (itemData.totalTickets) {
-          return `$${itemData.minPrice.toFixed(
-            2
-          )} - $${itemData.maxPrice.toFixed(2)}`
-        } else {
-          return 'N/A'
-        }
-      }
-
-      formattedData.forEach((item) => {
-        tr = document.createElement('tr')
-        let td = document.createElement('td')
-        td.innerHTML = `<span class="stubhub-table-show-name">${item.name}</span><br><span class="stubhub-table-venue-name">${item.venueName}</span>`
-        tr.appendChild(td)
-
-        td = document.createElement('td')
-        td.innerHTML = `${
-          item.threeDaysOut.totalTickets
-        } tickets<br />${getRange(item.threeDaysOut)}`
-        tr.appendChild(td)
-
-        td = document.createElement('td')
-        td.innerHTML = `${
-          item.sevenDaysOut.totalTickets
-        } tickets<br />${getRange(item.sevenDaysOut)}`
-        tr.appendChild(td)
-
-        td = document.createElement('td')
-        td.innerHTML = `${
-          item.thirtyDaysOut.totalTickets
-        } tickets<br />${getRange(item.thirtyDaysOut)}`
-        tr.appendChild(td)
-
-        tbody.appendChild(tr)
-      })
-
-      // Create row for averages
-      tr = document.createElement('tr')
-      let td = document.createElement('td')
-      td.innerHTML = `<span class="stubhub-table-show-name">Averages</span>`
-      tr.appendChild(td)
-
-      const getAverage = (
-        shows: Show[],
-        field: 'minListPrice' | 'maxListPrice'
-      ) => {
-        return (
-          shows.reduce((total, show) => total + show[field], 0) /
-          shows.length
-        )
-      }
-
-      td = document.createElement('td')
-      td.innerHTML = `Min: $${getAverage(
-        threeDayResults.filter((show: Show) => show.minListPrice),
-        'minListPrice'
-      ).toFixed(2)}<br>Max: $${getAverage(
-        threeDayResults.filter((show: Show) => show.maxListPrice),
-        'maxListPrice'
-      ).toFixed(2)}`
-      tr.appendChild(td)
-
-      td = document.createElement('td')
-      td.innerHTML = `Min: $${getAverage(
-        sevenDayResults.filter((show: Show) => show.minListPrice),
-        'minListPrice'
-      ).toFixed(2)}<br>Max: $${getAverage(
-        sevenDayResults.filter((show: Show) => show.maxListPrice),
-        'maxListPrice'
-      ).toFixed(2)}`
-      tr.appendChild(td)
-
-      td = document.createElement('td')
-      td.innerHTML = `Min: $${getAverage(
-        thirtyDayResults.filter((show: Show) => show.minListPrice),
-        'minListPrice'
-      ).toFixed(2)}<br>Max: $${getAverage(
-        thirtyDayResults.filter((show: Show) => show.maxListPrice),
-        'maxListPrice'
-      ).toFixed(2)}`
-      tr.appendChild(td)
-
-      tbody.appendChild(tr)
-
-      table.appendChild(tbody)
+      element.appendChild(avgTable)
       element.appendChild(table)
     })
+}
+
+const createAveragesTable = (
+  threeDayResults: any,
+  sevenDayResults: any,
+  thirtyDayResults: any
+) => {
+  // Create table for averages
+  const avgTable = document.createElement('table')
+  const avgThead = document.createElement('thead')
+  let tr = document.createElement('tr')
+
+  let th = document.createElement('th')
+  th.innerText = 'Broadway Ticket Price Range'
+  tr.appendChild(th)
+
+  th = document.createElement('th')
+  th.innerText = '3 days out'
+  tr.appendChild(th)
+
+  th = document.createElement('th')
+  th.innerText = '7 days out'
+  tr.appendChild(th)
+
+  th = document.createElement('th')
+  th.innerText = '30 days out'
+  tr.appendChild(th)
+
+  avgThead.appendChild(tr)
+  avgTable.appendChild(avgThead)
+
+  const avgTbody = document.createElement('tbody')
+
+  tr = document.createElement('tr')
+  let td = document.createElement('td')
+  td.innerHTML = `<span class="stubhub-table-show-name">Averages</span>`
+  tr.appendChild(td)
+
+  const getAverage = (
+    shows: Show[],
+    field: 'minListPrice' | 'maxListPrice'
+  ) => {
+    return (
+      shows.reduce((total, show) => total + show[field], 0) /
+      shows.length
+    )
+  }
+
+  td = document.createElement('td')
+  td.innerHTML = `Min: $${getAverage(
+    threeDayResults.filter((show: Show) => show.minListPrice),
+    'minListPrice'
+  ).toFixed(2)}<br>Max: $${getAverage(
+    threeDayResults.filter((show: Show) => show.maxListPrice),
+    'maxListPrice'
+  ).toFixed(2)}`
+  tr.appendChild(td)
+
+  td = document.createElement('td')
+  td.innerHTML = `Min: $${getAverage(
+    sevenDayResults.filter((show: Show) => show.minListPrice),
+    'minListPrice'
+  ).toFixed(2)}<br>Max: $${getAverage(
+    sevenDayResults.filter((show: Show) => show.maxListPrice),
+    'maxListPrice'
+  ).toFixed(2)}`
+  tr.appendChild(td)
+
+  td = document.createElement('td')
+  td.innerHTML = `Min: $${getAverage(
+    thirtyDayResults.filter((show: Show) => show.minListPrice),
+    'minListPrice'
+  ).toFixed(2)}<br>Max: $${getAverage(
+    thirtyDayResults.filter((show: Show) => show.maxListPrice),
+    'maxListPrice'
+  ).toFixed(2)}`
+  tr.appendChild(td)
+
+  avgTbody.appendChild(tr)
+  avgTable.appendChild(avgTbody)
+
+  return avgTable
+}
+
+const createShowsTable = (formattedData: any) => {
+  const table = document.createElement('table')
+  const thead = document.createElement('thead')
+  let tr = document.createElement('tr')
+
+  let th = document.createElement('th')
+  th.innerText = 'Show'
+  tr.appendChild(th)
+
+  th = document.createElement('th')
+  th.innerText = '3 days out'
+  tr.appendChild(th)
+
+  th = document.createElement('th')
+  th.innerText = '7 days out'
+  tr.appendChild(th)
+
+  th = document.createElement('th')
+  th.innerText = '30 days out'
+  tr.appendChild(th)
+
+  thead.appendChild(tr)
+  table.appendChild(thead)
+
+  const tbody = document.createElement('tbody')
+
+  const getRange = (itemData: {
+    totalTickets: number
+    minPrice: number
+    maxPrice: number
+  }) => {
+    if (itemData.totalTickets) {
+      return `$${itemData.minPrice.toFixed(
+        2
+      )} - $${itemData.maxPrice.toFixed(2)}`
+    } else {
+      return 'N/A'
+    }
+  }
+
+  formattedData.forEach((item: any) => {
+    tr = document.createElement('tr')
+    let td = document.createElement('td')
+    td.innerHTML = `<span class="stubhub-table-show-name">${item.name}</span><br><span class="stubhub-table-venue-name">${item.venueName}</span>`
+    tr.appendChild(td)
+
+    td = document.createElement('td')
+    td.innerHTML = `${
+      item.threeDaysOut.totalTickets
+    } tickets<br />${getRange(item.threeDaysOut)}`
+    tr.appendChild(td)
+
+    td = document.createElement('td')
+    td.innerHTML = `${
+      item.sevenDaysOut.totalTickets
+    } tickets<br />${getRange(item.sevenDaysOut)}`
+    tr.appendChild(td)
+
+    td = document.createElement('td')
+    td.innerHTML = `${
+      item.thirtyDaysOut.totalTickets
+    } tickets<br />${getRange(item.thirtyDaysOut)}`
+    tr.appendChild(td)
+
+    tbody.appendChild(tr)
+  })
+
+  tbody.appendChild(tr)
+  table.appendChild(tbody)
+
+  return table
 }
