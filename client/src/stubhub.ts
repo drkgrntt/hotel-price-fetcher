@@ -161,7 +161,7 @@ const addAveragesToTable = (
 
   tr = document.createElement('tr')
   let td = document.createElement('td')
-  td.innerHTML = `<span class="stubhub-table-show-name">Averages</span>`
+  td.innerHTML = `<span class="stubhub-table-show-name">Average<br />Minimum Price / Maximum Price</span>`
   tr.appendChild(td)
 
   const getAverage = (
