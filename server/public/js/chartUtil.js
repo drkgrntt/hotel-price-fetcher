@@ -62,9 +62,12 @@ export const createBarChart = (elementId, columnLabels, dataLabel, chartData, ba
     const showNumbers = () => {
         if (!horizontal) {
             ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+        }
+        else {
+            ctx.textBaseline = 'middle';
         }
         ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333';
-        ctx.textBaseline = 'bottom';
         chart.data.datasets.forEach((dataset, i) => {
             var meta = chart.getDatasetMeta(i);
             meta.data.forEach(function (bar, index) {

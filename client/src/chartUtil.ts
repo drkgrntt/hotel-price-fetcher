@@ -81,9 +81,11 @@ export const createBarChart = (
   const showNumbers = () => {
     if (!horizontal) {
       ctx.textAlign = 'center'
+      ctx.textBaseline = 'bottom'
+    } else {
+      ctx.textBaseline = 'middle'
     }
     ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333'
-    ctx.textBaseline = 'bottom'
 
     // Loop through each data in the datasets
     chart.data.datasets.forEach((dataset: any, i: number) => {
