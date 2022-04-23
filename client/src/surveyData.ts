@@ -285,7 +285,8 @@ const showIsFirstShow = (
       dataLabel,
       chartData,
       (a: string) => `${a}%`,
-      isDarkTheme
+      isDarkTheme,
+      true
     )
   )
 }

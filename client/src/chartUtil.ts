@@ -49,7 +49,8 @@ export const createBarChart = (
   dataLabel: string,
   chartData: number[],
   barLabelMutation: Function = (label: number) => label.toString(),
-  isDarkTheme: boolean = false
+  isDarkTheme: boolean = false,
+  horizontal: boolean = false
 ) => {
   const element = document.getElementById(elementId)
   if (!element) {
@@ -78,7 +79,9 @@ export const createBarChart = (
   })
 
   const showNumbers = () => {
-    ctx.textAlign = 'center'
+    if (!horizontal) {
+      ctx.textAlign = 'center'
+    }
     ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333'
     ctx.textBaseline = 'bottom'
 
@@ -94,6 +97,7 @@ export const createBarChart = (
 
   chart.options = {
     responsive: true,
+    indexAxis: horizontal ? 'y' : 'x',
     events: [],
     tooltips: {
       mode: 'point',
