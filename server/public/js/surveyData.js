@@ -127,6 +127,6 @@ const showIsFirstShow = (elementId, data, isDarkTheme = false) => {
     const segmentLabels = Object.keys(formatted);
     const dataLabel = "If this is a TKTS Patron's first show";
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createBarChart(elementId, segmentLabels, dataLabel, chartData, (a) => `${a}%`, isDarkTheme));
+    queueChartFunction(() => createBarChart(elementId, segmentLabels, dataLabel, chartData, (a) => `${a}%`, isDarkTheme, true));
 };
 //# sourceMappingURL=surveyData.js.map

@@ -35,7 +35,7 @@ export const buildTimestamp = (date) => {
     const timestamp = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     return timestamp;
 };
-export const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelMutation = (label) => label.toString(), isDarkTheme = false) => {
+export const createBarChart = (elementId, columnLabels, dataLabel, chartData, barLabelMutation = (label) => label.toString(), isDarkTheme = false, horizontal = false) => {
     const element = document.getElementById(elementId);
     if (!element) {
         return;
@@ -60,7 +60,9 @@ export const createBarChart = (elementId, columnLabels, dataLabel, chartData, ba
         },
     });
     const showNumbers = () => {
-        ctx.textAlign = 'center';
+        if (!horizontal) {
+            ctx.textAlign = 'center';
+        }
         ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333';
         ctx.textBaseline = 'bottom';
         chart.data.datasets.forEach((dataset, i) => {
@@ -73,6 +75,7 @@ export const createBarChart = (elementId, columnLabels, dataLabel, chartData, ba
     };
     chart.options = {
         responsive: true,
+        indexAxis: horizontal ? 'y' : 'x',
         events: [],
         tooltips: {
             mode: 'point',
