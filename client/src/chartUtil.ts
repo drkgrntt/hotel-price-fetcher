@@ -9,8 +9,14 @@ const chartColors = [
 ]
 
 let chartIsLoaded = false
+let chartIsLoading = false
 const chartFunctionQueue: Function[] = []
 const loadChart = () => {
+  if (chartIsLoading) {
+    return
+  } else {
+    chartIsLoading = true
+  }
   const script = document.createElement('script')
   script.src =
     'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js'
@@ -25,9 +31,9 @@ const loadChart = () => {
   }
   document.body.appendChild(script)
 }
-window.addEventListener('load', () => loadChart())
 
 export const queueChartFunction = (func: Function) => {
+  loadChart()
   if (chartIsLoaded) {
     func()
   } else {
