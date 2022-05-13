@@ -114,6 +114,78 @@ export const createBarChart = (elementId, columnLabels, dataLabel, chartData, ba
     element.innerHTML = '';
     element.appendChild(canvas);
 };
+export const createLineChart = (elementId, columnLabels, dataLabel, chartData, barLabelMutation = (label) => label.toString(), isDarkTheme = false, horizontal = false) => {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        throw new Error('Canvas not supported');
+    }
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: columnLabels,
+            datasets: [
+                {
+                    label: dataLabel,
+                    data: chartData,
+                    backgroundColor: chartColors,
+                    borderWidth: 1,
+                },
+            ],
+        },
+    });
+    const showNumbers = () => {
+        if (!horizontal) {
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+        }
+        else {
+            ctx.textBaseline = 'middle';
+        }
+        ctx.fillStyle = isDarkTheme ? '#f0f0f0' : '#333';
+        chart.data.datasets.forEach((dataset, i) => {
+            var meta = chart.getDatasetMeta(i);
+            meta.data.forEach(function (bar, index) {
+                var data = barLabelMutation(dataset.data[index]);
+                ctx.fillText(data, bar.x, bar.y - 5);
+            });
+        });
+    };
+    chart.options = {
+        responsive: true,
+        indexAxis: horizontal ? 'y' : 'x',
+        events: [],
+        tooltips: {
+            mode: 'point',
+        },
+        animation: {
+            onProgress: showNumbers,
+            onComplete: showNumbers,
+        },
+        plugins: {
+            legend: false,
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: isDarkTheme ? '#f0f0f0' : '#333',
+                },
+            },
+            x: {
+                ticks: {
+                    color: isDarkTheme ? '#f0f0f0' : '#333',
+                },
+            },
+        },
+    };
+    element.innerHTML = '';
+    element.appendChild(canvas);
+};
 export const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartData, isDarkTheme = false) => {
     const element = document.getElementById(elementId);
     if (!element) {

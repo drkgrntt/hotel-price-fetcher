@@ -1,7 +1,8 @@
 import { BASE_API_URL } from './index.js'
 import {
   buildTimestamp,
-  createBarChart,
+  // createBarChart,
+  createLineChart,
   queueChartFunction,
 } from './chartUtil.js'
 
@@ -50,7 +51,7 @@ export const getWeeklyAverageHotelPrices = async (
       const barLabelMutation = (label: number) => `$${label}`
 
       queueChartFunction(() =>
-        createBarChart(
+        createLineChart(
           elementId,
           columnLabels,
           dataLabel,

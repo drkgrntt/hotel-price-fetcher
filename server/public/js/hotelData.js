@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BASE_API_URL } from './index.js';
-import { buildTimestamp, createBarChart, queueChartFunction, } from './chartUtil.js';
+import { buildTimestamp, createLineChart, queueChartFunction, } from './chartUtil.js';
 export const getTodaysAverageHotelPrice = (elementId) => __awaiter(void 0, void 0, void 0, function* () {
     fetch(`${BASE_API_URL}/hotel-prices/day`)
         .then((res) => res.json())
@@ -31,7 +31,7 @@ export const getWeeklyAverageHotelPrices = (elementId, isDarkTheme = false) => _
         const dataLabel = `Average hotel prices near Times Square as of ${timestamp}`;
         const data = res.prices.map((price) => price.price.toFixed(2));
         const barLabelMutation = (label) => `$${label}`;
-        queueChartFunction(() => createBarChart(elementId, columnLabels, dataLabel, data, barLabelMutation, isDarkTheme));
+        queueChartFunction(() => createLineChart(elementId, columnLabels, dataLabel, data, barLabelMutation, isDarkTheme));
     });
 });
 //# sourceMappingURL=hotelData.js.map
