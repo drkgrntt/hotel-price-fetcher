@@ -98,12 +98,14 @@ export const fetchStubhubData = async (
   res: Response
 ) => {
   const now = new Date().getTime()
-  console.log(now - timestamp, 1000 * 60 * 60 * 3)
+  console.log(now - timestamp, 1000 * 60 * 60 * 3, timestamp && now - timestamp < 1000 * 60 * 60 * 3)
 
   // one fetch per 3 hours
   if (timestamp && now - timestamp < 1000 * 60 * 60 * 3) {
+    console.log('not fetching')
     return getStubhubData(req, res)
   }
+  console.log('fetching')
   timestamp = now
 
   await getAccessToken()
