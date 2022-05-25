@@ -98,71 +98,80 @@ export const fetchStubhubData = async (
   res: Response
 ) => {
   const now = new Date().getTime()
-  console.log(now - timestamp, 1000 * 60 * 60 * 3, timestamp && now - timestamp < 1000 * 60 * 60 * 3)
+  const timeframe = 1000 * 60 * 60 * 3
+  console.log(
+    now - timestamp,
+    timeframe,
+    timestamp && now - timestamp < timeframe
+  )
 
   // one fetch per 3 hours
-  if (timestamp && now - timestamp < 1000 * 60 * 60 * 3) {
+  if (timestamp && now - timestamp < timeframe) {
     console.log('not fetching')
     return getStubhubData(req, res)
   }
   console.log('fetching')
   timestamp = now
 
-  await getAccessToken()
+  try {
+    await getAccessToken()
 
-  const API_URL = 'https://api.stubhub.com/sellers/search/events/v3'
-  const headers: AxiosRequestHeaders = {
-    authorization: `Bearer ${ACCESS_TOKEN}`,
-  }
-  const config: AxiosRequestConfig = {
-    headers,
-  }
-
-  const start = format(new Date(), 'yyyy-MM-dd')
-  const end = format(addDays(new Date(), 30), 'yyyy-MM-dd')
-
-  // Make API calls
-  const promises = VENUE_IDS.map((venueId) => {
-    config.params = {
-      dateLocal: `${start} TO ${end}`,
-      city: 'New York',
-      state: 'NY',
-      country: 'US',
-      rows: 500,
-      venueId,
+    const API_URL = 'https://api.stubhub.com/sellers/search/events/v3'
+    const headers: AxiosRequestHeaders = {
+      authorization: `Bearer ${ACCESS_TOKEN}`,
     }
-    return axios.get(API_URL, config)
-  })
-  VENUE_NAMES.forEach((venue) => {
-    config.params = {
-      dateLocal: `${start} TO ${end}`,
-      city: 'New York',
-      state: 'NY',
-      country: 'US',
-      rows: 500,
-      venue,
+    const config: AxiosRequestConfig = {
+      headers,
     }
-    promises.push(axios.get(API_URL, config))
-  })
 
-  // Combine responses
-  const responses = await Promise.all(promises)
-  const data = responses.reduce((events, response) => {
-    return [
-      ...events,
-      ...response.data.events
-        .filter(
-          // Filter out ids of venues with similar names to valid venues
-          (item: any) => !INVALID_VENUE_IDS.includes(item.venue.id)
-        )
-        .map((show: any) => Show.fromStubhub(show)),
-    ]
-  }, [] as any[])
+    const start = format(new Date(), 'yyyy-MM-dd')
+    const end = format(addDays(new Date(), 30), 'yyyy-MM-dd')
 
-  res.send({ count: data.length, data })
+    // Make API calls
+    const promises = VENUE_IDS.map((venueId) => {
+      config.params = {
+        dateLocal: `${start} TO ${end}`,
+        city: 'New York',
+        state: 'NY',
+        country: 'US',
+        rows: 500,
+        venueId,
+      }
+      return axios.get(API_URL, config)
+    })
+    VENUE_NAMES.forEach((venue) => {
+      config.params = {
+        dateLocal: `${start} TO ${end}`,
+        city: 'New York',
+        state: 'NY',
+        country: 'US',
+        rows: 500,
+        venue,
+      }
+      promises.push(axios.get(API_URL, config))
+    })
 
-  // Save to the database
-  write('shShows', data, ['shId', 'date'])
+    // Combine responses
+    const responses = await Promise.all(promises)
+    const data = responses.reduce((events, response) => {
+      return [
+        ...events,
+        ...response.data.events
+          .filter(
+            // Filter out ids of venues with similar names to valid venues
+            (item: any) => !INVALID_VENUE_IDS.includes(item.venue.id)
+          )
+          .map((show: any) => Show.fromStubhub(show)),
+      ]
+    }, [] as any[])
+
+    res.send({ count: data.length, data })
+
+    // Save to the database
+    await write('shShows', data, ['shId', 'date'])
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 export const getStubhubData = async (req: Request, res: Response) => {
