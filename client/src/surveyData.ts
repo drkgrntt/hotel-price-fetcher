@@ -269,24 +269,24 @@ const showIsFirstShow = (
   const dataLabel = "If this is a TKTS Patron's first show"
   const chartData = Object.values(formatted)
 
-  // queueChartFunction(() =>
-  //   createPieChart(
-  //     elementId,
-  //     segmentLabels,
-  //     dataLabel,
-  //     chartData,
-  //     isDarkTheme
-  //   )
-  // )
   queueChartFunction(() =>
-    createBarChart(
+    createPieChart(
       elementId,
       segmentLabels,
       dataLabel,
       chartData,
-      (a: string) => `${a}%`,
-      isDarkTheme,
-      true
+      isDarkTheme
     )
   )
+  // queueChartFunction(() =>
+  //   createBarChart(
+  //     elementId,
+  //     segmentLabels,
+  //     dataLabel,
+  //     chartData,
+  //     (a: string) => `${a}%`,
+  //     isDarkTheme,
+  //     true
+  //   )
+  // )
 }
