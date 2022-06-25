@@ -64,7 +64,7 @@ const scrapeAveragePrices = async (
       await page.waitForTimeout(100)
     }
 
-    await page.waitForTimeout(10000)
+    await page.waitForTimeout(15000)
     for (let i = 0; i < numberOfDays; i++) {
       const prices: number[] = []
 
@@ -87,7 +87,7 @@ const scrapeAveragePrices = async (
         const nextDayButton = await page.$$('button[jsname="a1ZUMe"]')
         await nextDayButton[1].click()
         console.log('next click')
-        await page.waitForTimeout(10000)
+        await page.waitForTimeout(15000)
       }
     }
   } finally {
