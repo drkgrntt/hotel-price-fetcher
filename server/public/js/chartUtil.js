@@ -143,6 +143,7 @@ export const createLineChart = (elementId, columnLabels, dataLabel, chartData, b
                     label: dataLabel,
                     data: chartData,
                     backgroundColor: chartColors,
+                    borderColor: isDarkTheme ? ['#ccc'] : undefined,
                     borderWidth: 1,
                 },
             ],

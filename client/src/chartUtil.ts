@@ -184,6 +184,7 @@ export const createLineChart = (
           data: chartData,
           backgroundColor: chartColors,
           // borderColor: borderColors,
+          borderColor: isDarkTheme ? ['#ccc'] : undefined,
           borderWidth: 1,
         },
       ],
