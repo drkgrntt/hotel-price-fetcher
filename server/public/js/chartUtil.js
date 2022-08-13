@@ -184,8 +184,9 @@ export const createLineChart = (elementId, columnLabels, dataLabel, chartData, b
             y: {
                 beginAtZero: true,
                 max: chartData.reduce((max, item) => {
-                    if (item > max) {
-                        return Math.ceil(item / 50) * 50 + 50;
+                    const rounded = Math.ceil(item / 50) * 50 + 50;
+                    if (rounded > max) {
+                        return rounded;
                     }
                     return max;
                 }, 0),
