@@ -183,6 +183,12 @@ export const createLineChart = (elementId, columnLabels, dataLabel, chartData, b
         scales: {
             y: {
                 beginAtZero: true,
+                max: chartData.reduce((max, item) => {
+                    if (item > max) {
+                        return Math.ceil(item / 50) * 50 + 50;
+                    }
+                    return max;
+                }, 0),
                 ticks: {
                     color: isDarkTheme ? '#f0f0f0' : '#333',
                 },
