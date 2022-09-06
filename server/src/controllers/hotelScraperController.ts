@@ -79,7 +79,7 @@ const scrapeAveragePrices = async (
       }
 
       const averagePrice =
-        prices.reduce((a, b) => a + b) / prices.length
+        prices.reduce((a, b) => a + b, 0) / prices.length
       averagePrices.push(averagePrice)
       console.log('price: ', averagePrice)
       // Click to the next day
