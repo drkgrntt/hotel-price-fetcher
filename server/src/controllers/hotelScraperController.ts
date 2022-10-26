@@ -68,7 +68,7 @@ const scrapeAveragePrices = async (
     for (let i = 0; i < numberOfDays; i++) {
       const prices: number[] = []
 
-      const elements = await page.$$('.Aujq9d.sSHqwe')
+      const elements = await page.$$('.Kz2OTe.znMx9d')
       for (const element of elements) {
         const value = await page.evaluate(
           (el) => el.textContent,
