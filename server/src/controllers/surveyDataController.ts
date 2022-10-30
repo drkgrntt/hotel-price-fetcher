@@ -5,15 +5,17 @@ export const getSurveyResults = async (
   req: Request,
   res: Response
 ) => {
-  const days = (req.query.days as string) ?? '7'
-  if (isNaN(parseInt(days))) {
-    res
-      .status(400)
-      .send({ message: 'Please send a valid number of days' })
-    return
+  let numberOfDays = 7
+  if (req.query.days && !isNaN(parseInt(req.query.days as string))) {
+    numberOfDays = parseInt(req.query.days as string)
   }
 
-  const results = await getSurveyData(parseInt(days))
+  let skip = 0
+  if (req.query.skip && !isNaN(parseInt(req.query.skip as string))) {
+    skip = parseInt(req.query.skip as string)
+  }
+
+  const results = await getSurveyData(numberOfDays, skip)
 
   res.send({ data: results })
 }
