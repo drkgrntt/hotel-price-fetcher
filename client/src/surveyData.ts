@@ -283,7 +283,7 @@ const showIsFirstShow = (
       dataLabel,
       chartData,
       isDarkTheme,
-      'right'
+      'top'
     )
   )
   // queueChartFunction(() =>
