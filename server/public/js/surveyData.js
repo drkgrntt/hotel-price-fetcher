@@ -131,6 +131,6 @@ const showIsFirstShow = (elementId, data, isDarkTheme = false) => {
     const segmentLabels = Object.keys(formatted).map((label) => labelMap[label.toLowerCase()]);
     const dataLabel = "If this is a TKTS Patron's first show";
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme, 'right'));
+    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
 };
 //# sourceMappingURL=surveyData.js.map
