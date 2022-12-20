@@ -265,7 +265,14 @@ const showIsFirstShow = (
     )
   })
 
-  const segmentLabels = Object.keys(formatted)
+  const labelMap: Record<string, string> = {
+    yes: 'First Time Broadway Ticket Buyer',
+    no: 'Broadway Returnee',
+  }
+
+  const segmentLabels = Object.keys(formatted).map(
+    (label) => labelMap[label.toLowerCase()]
+  )
   const dataLabel = "If this is a TKTS Patron's first show"
   const chartData = Object.values(formatted)
 
@@ -275,7 +282,8 @@ const showIsFirstShow = (
       segmentLabels,
       dataLabel,
       chartData,
-      isDarkTheme
+      isDarkTheme,
+      'right'
     )
   )
   // queueChartFunction(() =>

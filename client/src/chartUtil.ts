@@ -314,7 +314,8 @@ export const createPieChart = (
   segmentLabels: string[],
   dataLabel: string,
   chartData: number[],
-  isDarkTheme: boolean = false
+  isDarkTheme: boolean = false,
+  legendPosition: string = 'top'
 ) => {
   const element = document.getElementById(elementId)
   if (!element) {
@@ -347,7 +348,7 @@ export const createPieChart = (
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: legendPosition,
         labels: {
           color: isDarkTheme ? '#f0f0f0' : '#333',
         },
