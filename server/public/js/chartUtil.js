@@ -250,7 +250,7 @@ export const createDoughnutChart = (elementId, segmentLabels, dataLabel, chartDa
     element.innerHTML = '';
     element.appendChild(canvas);
 };
-export const createPieChart = (elementId, segmentLabels, dataLabel, chartData, isDarkTheme = false) => {
+export const createPieChart = (elementId, segmentLabels, dataLabel, chartData, isDarkTheme = false, legendPosition = 'top') => {
     const element = document.getElementById(elementId);
     if (!element) {
         return;
@@ -279,7 +279,7 @@ export const createPieChart = (elementId, segmentLabels, dataLabel, chartData, i
         responsive: true,
         plugins: {
             legend: {
-                position: 'top',
+                position: legendPosition,
                 labels: {
                     color: isDarkTheme ? '#f0f0f0' : '#333',
                 },

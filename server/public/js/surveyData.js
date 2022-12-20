@@ -124,9 +124,13 @@ const showIsFirstShow = (elementId, data, isDarkTheme = false) => {
     Object.keys(formatted).forEach((key) => {
         formatted[key] = parseInt(((formatted[key] / data.length) * 100).toString());
     });
-    const segmentLabels = Object.keys(formatted);
+    const labelMap = {
+        yes: 'First Time Broadway Ticket Buyer',
+        no: 'Broadway Returnee',
+    };
+    const segmentLabels = Object.keys(formatted).map((label) => labelMap[label.toLowerCase()]);
     const dataLabel = "If this is a TKTS Patron's first show";
     const chartData = Object.values(formatted);
-    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme));
+    queueChartFunction(() => createPieChart(elementId, segmentLabels, dataLabel, chartData, isDarkTheme, 'right'));
 };
 //# sourceMappingURL=surveyData.js.map
