@@ -282,8 +282,8 @@ const showIsFirstShow = (
       segmentLabels,
       dataLabel,
       chartData,
-      isDarkTheme
-      // 'right'
+      isDarkTheme,
+      'right'
     )
   )
   // queueChartFunction(() =>
