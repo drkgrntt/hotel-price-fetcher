@@ -43,6 +43,8 @@ const scrapeAveragePrices = async (
         waitUntil: 'networkidle2',
       }
     )
+    page.on('console', (msg) => console.log('PAGE LOG:', msg.text()))
+    await page.setViewport({ width: 1600, height: 900 })
 
     // The default page is not necessarily today,
     // so click back until it is today
@@ -65,6 +67,10 @@ const scrapeAveragePrices = async (
     }
 
     await page.waitForTimeout(15000)
+    // await page.screenshot({ path: 'ss.jpg' })
+    // const map = await page.$$('[aria-roledescription=map]')
+    // console.log({ map: map[0] })
+
     for (let i = 0; i < numberOfDays; i++) {
       const prices: number[] = []
 
