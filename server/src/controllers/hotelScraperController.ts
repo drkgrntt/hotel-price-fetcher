@@ -192,7 +192,7 @@ export const getPastPrices = async (req: Request, res: Response) => {
 }
 
 export const migrateHotelPrices = async (
-  req: Request,
+  _: Request,
   res: Response
 ) => {
   const prices = await read('prices', [{}])
