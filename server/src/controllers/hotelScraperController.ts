@@ -190,3 +190,12 @@ export const getPastPrices = async (req: Request, res: Response) => {
   const prices = await read('prices', filters)
   res.send({ prices })
 }
+
+export const migrateHotelPrices = async (
+  req: Request,
+  res: Response
+) => {
+  const prices = await read('prices', [{}])
+  await upsertPrices(prices as Price[], true)
+  res.send({ prices })
+}

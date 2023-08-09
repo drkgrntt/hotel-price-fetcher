@@ -8,6 +8,7 @@ import {
   getPastPrices,
   getThisWeeksAverage,
   getTodaysAverage,
+  migrateHotelPrices,
 } from './controllers/hotelScraperController'
 import {
   getSurveyResults,
@@ -43,6 +44,8 @@ const main = () => {
   app.get('/api/v1/hotel-prices/day', getTodaysAverage)
   app.get('/api/v1/hotel-prices/week', getThisWeeksAverage)
   app.get('/api/v1/hotel-prices/past', getPastPrices)
+
+  app.get('/api/v1/hotel-prices/migrate', migrateHotelPrices)
 
   app.get('/api/v1/survey/results', getSurveyResults)
   app.get('/api/v1/survey/timestamp', getLatestSurveyTimestamp)

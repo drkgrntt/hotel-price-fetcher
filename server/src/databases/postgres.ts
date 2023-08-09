@@ -1,12 +1,19 @@
 import { Client } from 'pg'
 import { Price } from '../types'
 
-export const upsertPrices = async (prices: Price[]) => {
+export const upsertPrices = async (
+  prices: Price[],
+  doNothing?: boolean
+) => {
   const client = new Client({
     connectionString: process.env.POSTGRES_URI,
   })
   try {
     await client.connect()
+
+    const onConflictCommand = doNothing
+      ? 'NOTHING'
+      : 'UPDATE SET price=EXCLUDED.price, updated_at=EXCLUDED.updated_at'
 
     const query = `
       INSERT INTO hotel_prices
@@ -17,11 +24,11 @@ export const upsertPrices = async (prices: Price[]) => {
             (price) =>
               `(${price.price}, '${new Date(
                 price.date
-              ).toLocaleDateString()}', NOW(), NOW())`
+              ).toLocaleDateString()}', NOW(), '${price.updated}')`
           )
           .join(',\n')}
       ON CONFLICT ("date") DO
-        UPDATE SET price=EXCLUDED.price, updated_at=EXCLUDED.updated_at;
+        ${onConflictCommand};
     `
 
     await client.query(query)
