@@ -1,8 +1,12 @@
 import { Request, Response } from 'express'
 import puppeteer from 'puppeteer'
-import { read, write } from '../databases/mongo'
-import { Price } from '../types'
-import { upsertPrices } from '../databases/postgres'
+import { write } from '../databases/mongo'
+import { Price, priceFromPg } from '../types'
+import {
+  getPricesBetween,
+  getToday,
+  upsertPrices,
+} from '../databases/postgres'
 
 let timestamp: number
 const maybeScrapeAveragePrices = async (
@@ -131,13 +135,8 @@ export const getTodaysAverage = async (
   _: Request,
   res: Response
 ): Promise<void> => {
-  const filters = [
-    {
-      date: new Date().toDateString(),
-    },
-  ]
-  const [price] = await read('prices', filters)
-  res.send({ price })
+  const [price] = await getToday()
+  res.send({ price: priceFromPg(price) })
   maybeScrapeAveragePrices()
 }
 
@@ -148,19 +147,12 @@ export const getThisWeeksAverage = async (
   const numberOfDays = 7
 
   const date = new Date()
-  const dates: string[] = []
 
-  for (let i = 0; i < numberOfDays; i++) {
-    dates.push(date.toDateString())
-    date.setDate(date.getDate() + 1)
-  }
+  const latest = new Date()
+  latest.setDate(date.getDate() + numberOfDays)
 
-  const filters = dates.map((d) => {
-    return { date: d }
-  })
-
-  const prices = await read('prices', filters)
-  res.send({ prices })
+  const prices = await getPricesBetween(date, latest)
+  res.send({ prices: prices.map(priceFromPg) })
   maybeScrapeAveragePrices()
 }
 
@@ -175,27 +167,13 @@ export const getPastPrices = async (req: Request, res: Response) => {
   }
 
   const date = new Date()
-  const dates: string[] = []
 
-  for (let i = 0; i < numberOfDays; i++) {
-    date.setDate(date.getDate() - 1)
-    if (i < skip) continue
-    dates.push(date.toDateString())
-  }
+  const earliest = new Date()
+  earliest.setDate(date.getDate() - numberOfDays)
 
-  const filters = dates.map((d) => {
-    return { date: d }
-  })
+  const latest = new Date()
+  latest.setDate(date.getDate() - skip)
 
-  const prices = await read('prices', filters)
-  res.send({ prices })
-}
-
-export const migrateHotelPrices = async (
-  _: Request,
-  res: Response
-) => {
-  const prices = await read('prices', [{}])
-  await upsertPrices(prices as Price[], true)
-  res.send({ prices })
+  const prices = await getPricesBetween(earliest, latest)
+  res.send({ prices: prices.map(priceFromPg) })
 }

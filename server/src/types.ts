@@ -1,7 +1,17 @@
 export interface Price {
+  id?: string
   price: number
   date: string
   updated: string
+}
+
+export const priceFromPg = (price: any): Price => {
+  return {
+    id: price.id,
+    price: price.price,
+    date: new Date(price.date).toDateString(),
+    updated: price.updated_at,
+  }
 }
 
 export class SurveyResult {

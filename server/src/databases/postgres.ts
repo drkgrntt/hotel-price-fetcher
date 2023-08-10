@@ -36,3 +36,52 @@ export const upsertPrices = async (
     await client.end()
   }
 }
+
+export const getToday = async () => {
+  const client = new Client({
+    connectionString: process.env.POSTGRES_URI,
+  })
+  try {
+    await client.connect()
+
+    const query = `
+      SELECT * FROM hotel_prices
+      WHERE DATE = $1;
+    `
+
+    const res = await client.query(query, [
+      new Date().toLocaleDateString(),
+    ])
+
+    return res.rows
+  } finally {
+    await client.end()
+  }
+}
+
+export const getPricesBetween = async (
+  earliest: Date,
+  latest?: Date
+) => {
+  const client = new Client({
+    connectionString: process.env.POSTGRES_URI,
+  })
+  try {
+    await client.connect()
+
+    let query = `
+      SELECT * FROM hotel_prices
+      WHERE DATE >= $1
+    `
+    if (latest) query += 'AND DATE < $2'
+
+    const res = await client.query(query, [
+      earliest.toLocaleDateString(),
+      latest?.toLocaleDateString(),
+    ])
+
+    return res.rows
+  } finally {
+    await client.end()
+  }
+}
