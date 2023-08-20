@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import puppeteer from 'puppeteer'
-import { write } from '../databases/mongo'
 import { Price, priceFromPg } from '../types'
 import {
   getPricesBetween,
@@ -124,7 +123,6 @@ const scrapeAveragePrices = async (
     })
     date.setDate(date.getDate() + 1)
   }
-  await write('prices', prices, ['date'])
 
   await upsertPrices(prices)
 
