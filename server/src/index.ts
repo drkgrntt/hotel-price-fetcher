@@ -2,8 +2,6 @@ import 'dotenv-safe/config'
 import { json, urlencoded } from 'body-parser'
 import express from 'express'
 import cors from 'cors'
-import swaggerUi from 'swagger-ui-express'
-import swaggerDoc from './swagger.json'
 import {
   getPastPrices,
   getThisWeeksAverage,
@@ -19,13 +17,6 @@ const main = () => {
   app.use(cors())
   app.use(json())
   app.use(urlencoded({ extended: true }))
-  app.use(
-    '/api/v1/docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerDoc)
-  )
-
-  app.use(express.static('public'))
 
   // Deprecated
   app.get('/api/v1/day', getTodaysAverage)
